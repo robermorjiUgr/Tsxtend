@@ -1,7 +1,7 @@
 # PARTITION DATA
 ## file config
 ---
-[partition-data.yaml](./Config/partition-data.yaml)
+[partition-data.yaml](../Config/partition-data.yaml)
 
 
 ## header functions
