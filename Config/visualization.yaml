@@ -1,0 +1,6 @@
+field_x:    timestamp
+field_y:    site_id
+graph:      missing
+_resample:  W
+measures:   None
+input_dir:  Data/test_icpe_v2

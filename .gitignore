@@ -1,0 +1,8 @@
+__pycache__/
+mlruns/
+*.csv
+Data/
+
+# Provisionalmente porque todavía no está acabado
+cboost.py
+

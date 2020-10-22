@@ -1,0 +1,3 @@
+fields_include: None
+input_dir: Data/test_icpe_v2
+alg_fs: FSMeasures

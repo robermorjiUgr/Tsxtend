@@ -1,0 +1,5 @@
+model_input:    air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,meter_reading
+model_output:   meter_reading 
+n_splits:       10
+objective:      reg:squarederror
+input_dir:      Data/test_icpe_v2

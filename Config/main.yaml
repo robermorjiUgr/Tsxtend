@@ -1,0 +1,7 @@
+etl:      ""
+deepl:    cnn,lstm,mlp
+mlearn:   ""
+n_rows:   0.0
+elements: ""
+input_dir: Data/test_icpe_v2
+output_dir: Data/test_icpe_v2

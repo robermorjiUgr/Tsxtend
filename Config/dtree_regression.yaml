@@ -1,0 +1,14 @@
+model_input:                timestamp,air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed  
+model_output:               meter_reading 
+input_dir:                  Data/test_icpe_v2
+max_depth:                  1
+criterion:                  mse
+splitter:                   best
+min_samples_split:          2
+min_samples_leaf:           1
+min_weight_fraction_leaf:   0.0
+max_features:               auto
+max_leaf_nodes:             2
+random_state:               0
+figure:                     False
+n_splits:                    5
