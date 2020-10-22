@@ -1,16 +1,17 @@
 # PARTITION DATA
-## file config
 ---
+## file config
+
 [partition-data.yaml](../Config/partition-data.yaml)
 
 
 ## header functions
----
+
 ~~~
 def PartitionDF(date_init, date_end, path_data, n_rows,fields_include,group_by_parent, output_dir)
 ~~~
 ## parameters
----
+
 *   **date_init:** Fecha de inicio, para obtener los datos del DataSet.
 *   **date_end:** Fecha de fin, para obtener los datos del DataSet.
 *   **path_data:** Ruta donde se tomarán los datos que se partirán del DataSet.
@@ -20,7 +21,7 @@ def PartitionDF(date_init, date_end, path_data, n_rows,fields_include,group_by_p
 *   **output_dir:** Directorio de salida. 
 
 ## Use
----
+
 
 
 
