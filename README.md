@@ -7,7 +7,7 @@ It has three modules:
 
 - ETL: It groups data visualization algorithms, data splitting, to obtain different groupings and store them in csv format, as well as, algorithms to perform data mining, such as outliers elimination, missing values and features extraction.
 
-- MLearn: It includes algorithms that use Machine Learning techniques, such as XGBoost, Random Forest and DTREE.
+- MLearn: It includes algorithms that use Machine Learning techniques, such as [XGBoost](xgb.py), Random Forest and DTREE.
 
 - DeepL: It includes algorithms that use Deep Learning techniques, such as CNN, LSTM, MLP, MLP HEADED. 
 
