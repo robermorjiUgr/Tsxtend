@@ -122,9 +122,6 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
                 plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
                 msno.heatmap(df)
                 plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
-
-
-
     
     mlflow.log_artifacts(input_dir+ "/visualization")
     
