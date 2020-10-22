@@ -100,7 +100,7 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
         df = df_origin.filter(  model_input.split(',') , axis=1)
     else:
         df = df_origin
-    # import ipdb; ipdb.set_trace()
+    
     rfr_model = RandomForestRegressor(n_estimators=n_estimators, criterion=criterion,
                                     max_depth=max_depth, min_samples_split=min_samples_split,
                                     min_samples_leaf=min_samples_leaf,
@@ -112,14 +112,15 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
                                     verbose=verbose, max_samples=None, warm_start=warm_start,
                                     ccp_alpha=ccp_alpha)
 
-    ### Normalización de los datos
+    ### Data Normalice
     scaler = MinMaxScaler(feature_range=(0, 1))
     df = scaler.fit_transform(df) 
     
     # Split  train, validate and test
     # train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )
     
-    # Revisar esto para obtener los campos necesarios.
+    # X: All columns except last columns.
+    # y: last column.
     X = df[:,0:-1]
     y = df[:,-1:]
 
@@ -130,13 +131,9 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
 
     for train_index, test_index in kfold.split(X):   
         X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
-
-        
-        rfr_model.fit(X_train, y_train.ravel())
-        
-        y_pred = rfr_model.predict(X_test)
-       
+        y_train, y_test = y[train_index], y[test_index]        
+        rfr_model.fit(X_train, y_train.ravel())        
+        y_pred = rfr_model.predict(X_test)       
         scores.append(mean_squared_error(y_test, y_pred))
     
     display_scores(np.sqrt(scores))

@@ -12,13 +12,13 @@ def PartitionDF(date_init, date_end, path_data, n_rows,fields_include,group_by_p
 ~~~
 ## parameters
 
-*   **date_init:** Fecha de inicio, para obtener los datos del DataSet.
-*   **date_end:** Fecha de fin, para obtener los datos del DataSet.
-*   **path_data:** Ruta donde se tomarán los datos que se partirán del DataSet.
-*   **n_rows:** Número de filas que se tomarán del DataSet.
-*   **fields_include:** Slección de una serie de columnas del DataSet.
-*   **group_by_parent:** Agrupación por niveles del DataSet. 
-*   **output_dir:** Directorio de salida. 
+*   **date_init:** Date init, in order to get data from DataSet. 
+*   **date_end:** Date end, in order to get data from DataSet. .
+*   **path_data:** Path origin DataSet.
+*   **n_rows:** Number rows DataSet.
+*   **fields_include:** Filter by DataSet fields.
+*   **group_by_parent:** Goup by DataSet levels.
+*   **output_dir:** Directorio de salida. Ouput directory, to save data.
 
 ## Use
 

@@ -1,18 +1,19 @@
 # TSxtend
+## Introduction
 
-TSxtend es una herramienta que ayudará a la realización de experimentación con series temporales. 
+TSxtend is a tool that will help to perform time series experimentation. The time series experimentation can be recorded with the help of the mlflow library.
 
-Posee tres módulos:
+It has three modules:
 
-- ETL: Agrupa algoritmos de visualización de datos, de partición de datos en disitintos csv agrupándolos en distintos campos, así como, algoritmos para reealzar minería de datos, como eliminación de outliers, missing values y extracción de características.
+- ETL: It groups data visualization algorithms, data splitting, to obtain different groupings and store them in csv format, as well as, algorithms to perform data mining, such as outliers elimination, missing values and features extraction.
 
-- MLearn: Engloba algoritmos que utilizan técnicas de Machine Learning, como es XGBoost, Random Forest and DTREE. 
+- MLearn: It includes algorithms that use Machine Learning techniques, such as XGBoost, Random Forest and DTREE.
 
-- DeepL: Engloba algoritmos que utilizan Deep Learning  como es Redes Convulacionales, LSTM, MLP.  
+- DeepL: It includes algorithms that use Deep Learning techniques, such as CNN, LSTM, MLP, MLP HEADED. 
 
-Todo ello se puede realizar mediante la ejecución  de una simple línea de comando. Para ellos se plantea una serie de arvhivos de configuración que, rellenando los distintos parámetros la aplicación realizará todos los calculos necesarios y mostrará una serie de resultados que nos ayudará de forma rápida a obtener un resultado de nuestra experimentación. 
+All this is done through the execution of a simple command line. For this, it is necessary to configure a series of files, depending on the techniques to be used in our experimentation. This will do all the necessary calculations and store the results helping us to get results quickly and efficiently. 
 
-Los módulos que componen esta herramienta son los siguientes:
+The modules that include this tool are the next:
 
 - ETL
     
