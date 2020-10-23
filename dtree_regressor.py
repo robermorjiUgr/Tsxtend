@@ -139,7 +139,7 @@ max_leaf_nodes, figure, n_splits):
     # SAVE SCHEMA MODEL
     signature = ModelSignature(inputs=input_schema, outputs=output_schema)
     # LOG MODEL ARTIFACTS
-    mlflow.sklearn.log_model(sk_model=dtree_model,signature=signature,artifact_path=input_dir+"/rf_regressor" )
+    mlflow.sklearn.log_model(sk_model=dtree_model,signature=signature,artifact_path=input_dir+"/dtree_regressor" )
 
 def display_scores(scores):
     print("Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores)))

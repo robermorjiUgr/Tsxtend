@@ -41,3 +41,66 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits)
 *   **figure:**                     [ (string) ] Params algorithms RandomForestRegressor
 
 ## explain use
+
+* Config.yaml
+
+~~~
+    main.yaml
+        etl:      ""
+        deepl:    ""
+        mlearn:   rf_regression
+        n_rows:   0.0
+        elements: ""
+        output_dir: Data/test_icpe_v2
+
+    rf_regression.yaml
+        model_input:              timestamp,air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed  
+        model_output:             meter_reading 
+        input_dir:                Data/test_icpe_v2
+        n_estimators:             100
+        criterion:                mse
+        max_depth:                1
+        min_samples_split:        2
+        min_samples_leaf:         1
+        min_weight_fraction_leaf: 0.0
+        max_features:             auto
+        max_leaf_nodes:           2
+        min_impurity_decrease:    0.0
+        bootstrap:                True
+        oob_score:                False
+        n_jobs:                   -1
+        random_state:             0
+        warm_start:               False
+        ccp_alpha:                0.0
+        max_samples:              None
+        figure:                   False
+        verbose:                  1
+        n_splits:                 5
+
+~~~
+This algorithms perfoms through a numbers of Kfold a series  of models using RANDOM FOREST Regressor algorithms. It goes developing predictions and storing each one of the results in the array called **scores**.
+**n_splits** will indicate us the number of times that the recived dataset will be split.  Finally, the metrics than  will be calculated are:
+
+- Scores list every Kfold.
+- mean
+- Tipic desviations
+
+Finally each model generated will be stored in mlflow.
+
+## return
+
+The metrics store are:
+- Scores list every Kfold.
+- mean
+- Tipic desviations
+~~~
+    for idx in range(len(scores)):
+            mlflow.log_metric("scores",scores[idx], step=idx+1 )
+    mlflow.log_metric("mean", np.mean(scores))
+    mlflow.log_metric("std", np.std(scores))
+~~~
+Store models:
+`mlflow.sklearn.log_model(sk_model=rfr_model,signature=signature,artifact_path=input_dir+"/rf_regressor" )`
+
+[ insert img mlflow ]
+

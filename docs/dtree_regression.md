@@ -33,3 +33,58 @@ max_leaf_nodes, figure, n_splits)
 *   **figure:** [ (string) ] Params algorithms DecisionTreeRegressor
 
 ## explain use
+
+* Config.yaml
+
+~~~
+    main.yaml
+        etl:      ""
+        deepl:    ""
+        mlearn:   dtree_regression
+        n_rows:   0.0
+        elements: ""
+        output_dir: Data/test_icpe_v2
+
+    dtree_regression.yaml
+        model_input:                timestamp,air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed  
+        model_output:               meter_reading 
+        input_dir:                  Data/test_icpe_v2
+        max_depth:                  1
+        criterion:                  mse
+        splitter:                   best
+        min_samples_split:          2
+        min_samples_leaf:           1
+        min_weight_fraction_leaf:   0.0
+        max_features:               auto
+        max_leaf_nodes:             2
+        random_state:               0
+        figure:                     False
+        n_splits:                   5
+
+~~~
+This algorithms perfoms through a numbers of Kfold a series  of models using DECISION TREE Regressor algorithms. It goes developing predictions and storing each one of the results in the array called **scores**.
+**n_splits** will indicate us the number of times that the recived dataset will be split.  Finally, the metrics than  will be calculated are:
+
+- Scores list every Kfold.
+- mean
+- Tipic desviations
+
+Finally each model generated will be stored in mlflow.
+
+## return
+
+The metrics store are:
+- Scores list every Kfold.
+- mean
+- Tipic desviations
+~~~
+    for idx in range(len(scores)):
+            mlflow.log_metric("scores",scores[idx], step=idx+1 )
+    mlflow.log_metric("mean", np.mean(scores))
+    mlflow.log_metric("std", np.std(scores))
+~~~
+Store models:
+`mlflow.sklearn.log_model(sk_model=dtree_model,signature=signature,artifact_path=input_dir+"/dtree_regressor" )`
+
+[ insert img mlflow ]
+

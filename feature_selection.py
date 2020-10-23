@@ -74,8 +74,8 @@ def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
 
         
         # Algorithms Feature Selections
-        if alg_fs == 'coorelation':
-            plt = coorelation(df_origin)
+        if alg_fs == 'correlation':
+            plt = correlation(df_origin)
             # Image .png correlations
             plt.savefig(input_dir+ "/FS/"+alg_fs+"/"+csv.replace(".csv",'')+".png")
         else:
@@ -101,7 +101,7 @@ def create_csv(dataframe, path, name):
     collect.Collections.createCSV(dataframe,path,name)
 
 
-def coorelation(data):
+def correlation(data):
     f, ax = plt.subplots(figsize=(18, 18))
     sns.heatmap(data.corr(), annot=True, linewidths=.5, fmt='.1f', ax=ax)
     return plt

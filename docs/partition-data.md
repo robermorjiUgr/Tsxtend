@@ -20,7 +20,7 @@ def PartitionDF(date_init, date_end, path_data, n_rows,fields_include,group_by_p
 *   **group_by_parent:** [ (list string) name field DataSet] Goup by DataSet levels.
 *   **output_dir:** [ ( string ) name directory  ] Ouput directory, to save data.
 
-## example
+## explain use
 *   Config.yaml 
 
     ~~~
@@ -40,7 +40,7 @@ def PartitionDF(date_init, date_end, path_data, n_rows,fields_include,group_by_p
         group_by_parent: meter,site_id
         output_dir: Data/test_icpe_v2
     ~~~
-## explain
+
 Selection date init  and date end in order to that the algorithms split origin dataset. If selection fields include split only realice with this fields selections. Path_data will be the path where get DataSet split. group_by_parent is params very important, ya que, group by dataset with varios levels. 
 
 En algunas ocasiones, it need  split DataSet use any conditions, for example, meter, site_id ... With this option could group by DataSet and then split for this fields. Example: group_by_parent:meter,site_id,building, creará una serie de DataSet donde para cada valor del padre, en este caso meter, y cada site_id y building_id. 
