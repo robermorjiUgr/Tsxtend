@@ -56,7 +56,6 @@ from  xgboost import DMatrix
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
-@click.option("--elements", type=str, default=None, help="Campo sobre el que se va realizar la predicción: site_id, building_id, meter")
 @click.option("--max_depth", type=int, default=1, help="max_depth")
 @click.option("--criterion", type=str, default='mse', help="criterion")
 @click.option("--splitter", type=str, default="best", help="splitter")
@@ -69,7 +68,7 @@ from  xgboost import DMatrix
 @click.option("--figure", type=str, default=False, help="figure")
 @click.option("--n_splits", type=int, default=False, help="figure")
 
-def DecisionTree(file_analysis,artifact_uri,experiment_id, run_id, input_dir,model_input,model_output,n_rows,elements, 
+def DecisionTree(file_analysis,artifact_uri,experiment_id, run_id, input_dir,model_input,model_output,n_rows,
 max_depth, criterion, splitter,min_samples_split, min_samples_leaf, min_weight_fraction_leaf,max_features, random_state,
 max_leaf_nodes, figure, n_splits):
     

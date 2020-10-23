@@ -56,7 +56,6 @@ def display_scores(scores):
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
-@click.option("--elements", type=str, default=None, help="Campo sobre el que se va realizar la predicción: site_id, building_id, meter")
 @click.option("--n_estimators", type=int, default=100, help="n_estimators")
 @click.option("--criterion", type=str, default='mse', help="criterion")
 @click.option("--max_depth", type=int, default=1, help="max_depth")
@@ -77,7 +76,7 @@ def display_scores(scores):
 @click.option("--figure", type=str, default=False, help="figure")
 @click.option("--n_splits", type=int, default=10, help="Num Splits KFold")
 
-def RandomForest(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input,model_output,n_rows,elements, 
+def RandomForest(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input,model_output,n_rows, 
 n_estimators,criterion,max_depth,min_samples_split, min_samples_leaf, min_weight_fraction_leaf,
 max_features,max_leaf_nodes, min_impurity_decrease, bootstrap,oob_score, n_jobs,
 random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):

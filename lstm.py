@@ -52,14 +52,13 @@ def eval_metrics(actual, pred):
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
-@click.option("--elements", type=str, default=None, help="Campo sobre el que se va realizar la predicción: site_id, building_id, meter")
 @click.option("--n_steps", type=int, default=3, help="n_steps redes convulacionales")
 @click.option("--epochs", type=int, default=10, help="Epochs")
 @click.option("--hidden_units", type=int, default=50, help="Hidden Units")
 @click.option("--batch_size", type=int, default=72, help="Batch Size")
 @click.option("--verbose", type=int, default=1, help="Verbose")
 
-def lstm(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input,model_output,n_rows,elements,
+def lstm(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input,model_output,n_rows,
 n_steps,epochs,hidden_units,batch_size,verbose):
     
 
