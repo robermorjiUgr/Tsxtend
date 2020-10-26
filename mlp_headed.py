@@ -67,7 +67,8 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     print("mlp_headed: " + str(file_analysis))
 
     if model_input:
-        df = df_origin.filter(  model_input.split(',') , axis=1)
+        model_input = model_input.split(',')
+        df = df_origin.filter( model_input  , axis=1)
     else:
         df = df_origin
 
@@ -77,57 +78,30 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     df = scaler.fit_transform(df) 
     
     # Split  train, validate and test
-    train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )
-        
+    train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )   
     
-    
+
     # Preparation data sequences TRAIN
-    in_seq1 = np.array(train[:,0])
-    in_seq2 = np.array(train[:,1])
-    out_seq = np.array(train[:,2])
-
-    in_seq1 = in_seq1.reshape((len(in_seq1),1))
-    in_seq2 = in_seq2.reshape((len(in_seq2),1))
-    out_seq = out_seq.reshape((len(out_seq),1))
-
-    dataset = np.hstack((in_seq1, in_seq2, out_seq))
-    X,y = split_sequences(dataset, n_steps)
-    
-        
+    X,y = preparation_data(train, n_steps, model_input)
     # Preparation data sequences VALIDATE
-    in_seq1 = np.array(validate[:,0])
-    in_seq2 = np.array(validate[:,1])
-    out_seq = np.array(validate[:,2])
-
-    in_seq1 = in_seq1.reshape((len(in_seq1),1))
-    in_seq2 = in_seq2.reshape((len(in_seq2),1))
-    out_seq = out_seq.reshape((len(out_seq),1))
-
-    dataset = np.hstack((in_seq1, in_seq2, out_seq))
-    validate_X,validate_y = split_sequences(dataset, n_steps)
+    validate_X,validate_y = preparation_data(validate, n_steps, model_input)
+    # # Preparation data sequences TEST
+    test_X,test_y = preparation_data(test, n_steps, model_input)
     
-    # Preparation data sequences TEST
-    in_seq1 = np.array(test[:,0])
-    in_seq2 = np.array(test[:,1])
-    out_seq = np.array(test[:,2])
-
-    in_seq1 = in_seq1.reshape((len(in_seq1),1))
-    in_seq2 = in_seq2.reshape((len(in_seq2),1))
-    out_seq = out_seq.reshape((len(out_seq),1))
+    # Partition dataset in n models
+    list_X = []
+    for indx in range(0,len(model_input)-1):
+        list_X.append(X[:, :, indx])
     
-    dataset = np.hstack((in_seq1, in_seq2, out_seq))
-    test_X,test_y = split_sequences(dataset, n_steps)
+    list_test_X = []
+    for indx in range(0,len(model_input)-1):
+        list_test_X.append(test_X[:, :, indx])
     
-    # Partition dataset in two models
-    X1 = X[:, :, 0]
-    X2 = X[:, :, 1]
-
-    test_X1 = test_X[:, :, 0]
-    test_X2 = test_X[:, :, 1]
+      
+    list_validate_X = []
+    for indx in range(0,len(model_input)-1):
+        list_validate_X.append(validate_X[:, :, indx])
     
-    validate_X1 = validate_X[:, :,0]
-    validate_X2 = validate_X[:, :,1]
-
 
     #first input model
     visible1 = Input( shape=(n_steps,))
@@ -145,18 +119,18 @@ n_steps,epochs,hidden_units,batch_size,verbose):
 
     # fit two input models
     history = model.fit(
-        [X1,X2],y,
+        list_X,y,
         epochs=epochs,
         batch_size=batch_size, 
-        validation_data=([validate_X1,validate_X2], validate_y),  
+        validation_data=(list_validate_X, validate_y),  
         verbose=1
     )
-    test_predict = model.predict([test_X1,test_X2 ],verbose=0)
+    test_predict = model.predict(list_test_X,verbose=0)
     (rmse, mae,r2) = eval_metrics(test_y, test_predict)
     
     name_model = "model_mlp_headed_"+file_analysis.replace(".csv","")
     
-    _list_input_schema  = model_input.split(',')
+    _list_input_schema  = model_input
     _list_output_schema = model_output.split(',')
     _list_input_schema = list ( set(_list_input_schema) - set(_list_output_schema))
 
@@ -208,7 +182,22 @@ def split_sequences(sequences, n_steps):
         y.append(seq_y)
     return np.array(X), np.array(y)
 
+def preparation_data(data, n_steps, model_input):
+    in_seq=[]
+    # Preparation data sequences TRAIN
+    for indx in range(0,len(model_input)-1):
+        in_seq.append(np.array(data[:,indx]))
+    out_seq = np.array(data[:,len(model_input)-1])
 
+    reshape_seq = []
+
+    for in_seq_ in in_seq:
+        reshape_seq.append(in_seq_.reshape(len(in_seq_),1))
+    out_seq = out_seq.reshape((len(out_seq),1))
+    reshape_seq.append(out_seq)
+
+    dataset = np.hstack((reshape_seq))
+    return split_sequences(dataset, n_steps)
    
 if __name__ == '__main__':
     mlp_headed()

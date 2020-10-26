@@ -73,7 +73,8 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     print("mlp: " + str(file_analysis))
 
     if model_input:
-        df = df_origin.filter(  model_input.split(',') , axis=1)
+        model_input = model_input.split(',')
+        df = df_origin.filter( model_input, axis=1)
     else:
         df = df_origin
 
@@ -84,67 +85,30 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     
     # Split  train, validate and test
     train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )
-      
-
-    #  DATA SEQUENCES  TRAIN
-    sequence = list()
-    for i in range(train.shape[1]-1):
-        sequence.append(np.array(train[:,i]))
-    sequence.append( np.array(train[:,-1]))
     
-
-    for i in range(len(sequence)):
-        sequence[i] = sequence[i].reshape(( len(sequence[i]),1 )) 
-
-    sequences = tuple(sequence)
-    dataset = np.hstack((sequences))
-
-    dataset = np.hstack((sequences))
-    X,y = split_sequences(dataset, n_steps)
+    # Preparation data sequences TRAIN
+    X,y = preparation_data(train, n_steps, model_input)
+    n_input_train = X.shape[1] * X.shape[2]
     
     # flatten input 
     n_input_train = X.shape[1] * X.shape[2]
     X = X.reshape((X.shape[0], n_input_train))
     
-    #  DATA SEQUENCES  VALIDATE
-    sequence = list()
-    for i in range(validate.shape[1]-1):
-        sequence.append(np.array(validate[:,i]))
-    sequence.append( np.array(validate[:,-1]))
-    
-
-    for i in range(len(sequence)):
-        sequence[i] = sequence[i].reshape(( len(sequence[i]),1 )) 
-
-    sequences = tuple(sequence)
-    dataset = np.hstack((sequences))
-
-    
-    validate_X,validate_y = split_sequences(dataset, n_steps)
+    # Preparation data sequences VALIDATE
+    validate_X,validate_y = preparation_data(validate, n_steps, model_input)
     
     # flatten input 
     n_input_validate = validate_X.shape[1] * validate_X.shape[2]
     validate_X = validate_X.reshape((validate_X.shape[0], n_input_validate))
+
+    # Preparation data sequences TEST
+    test_X,test_y = preparation_data(test, n_steps, model_input)
     
-    # DATA SEQUENCES TEST
-    sequence = list()
-    for i in range(test.shape[1]-1):
-        sequence.append(np.array(test[:,i]))
-    sequence.append( np.array(test[:,-1]))
-
-
-    for i in range(len(sequence)):
-        sequence[i] = sequence[i].reshape(( len(sequence[i]),1 )) 
-
-    sequences = tuple(sequence)
-    dataset = np.hstack((sequences))
-
-    test_X,test_y = split_sequences(dataset, n_steps)
-
     # flatten input 
     n_input_test = test_X.shape[1] * test_X.shape[2]
-    test_X = test_X.reshape((test_X.shape[0], n_input_test))   
-    
+    test_X = test_X.reshape((test_X.shape[0], n_input_test))  
+
+        
     # MODEL
     model = Sequential()
     model.add(Dense(hidden_units, activation= 'relu' , input_dim=n_input_train))
@@ -160,14 +124,12 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     )
 
     test_predict = model.predict(test_X,verbose=0)
-    (rmse, mae,r2) = eval_metrics(test_y, test_predict)
-            
-    
+    (rmse, mae,r2) = eval_metrics(test_y, test_predict)    
     
     name_model = "model_mlp_"+file_analysis.replace(".csv","")
     
     # SCHEMA MODEL MLFlow              
-    _list_input_schema  = model_input.split(',')
+    _list_input_schema  = model_input[:-1]
     _list_output_schema = model_output.split(',')
     _list_input_schema = list ( set(_list_input_schema) - set(_list_output_schema))
 
@@ -210,7 +172,23 @@ def split_sequences(sequences, n_steps):
         X.append(seq_x)
         y.append(seq_y)
     return np.array(X), np.array(y)
-    
+
+def preparation_data(data, n_steps, model_input):
+    in_seq=[]
+    # Preparation data sequences TRAIN
+    for indx in range(0,len(model_input)-1):
+        in_seq.append(np.array(data[:,indx]))
+    out_seq = np.array(data[:,len(model_input)-1])
+
+    reshape_seq = []
+
+    for in_seq_ in in_seq:
+        reshape_seq.append(in_seq_.reshape(len(in_seq_),1))
+    out_seq = out_seq.reshape((len(out_seq),1))
+    reshape_seq.append(out_seq)
+
+    dataset = np.hstack((reshape_seq))
+    return split_sequences(dataset, n_steps)
 
 def load_data( path, n_rows, fields=None):
     dataframe = collect.Collections.readCSV(path,n_rows,fields)

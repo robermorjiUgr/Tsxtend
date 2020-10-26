@@ -76,7 +76,8 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     print("LSTM: " + str(file_analysis))
 
     if model_input:
-        df = df_origin.filter(  model_input.split(',') , axis=1)
+        model_input = model_input.split(",")
+        df = df_origin.filter(  model_input , axis=1)
     else:
         df = df_origin
    
@@ -88,40 +89,14 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )        
     
     # Preparation data sequences TRAIN
-    in_seq1 = np.array(train[:,0])
-    in_seq2 = np.array(train[:,1])
-    out_seq = np.array(train[:,2])
-
-    in_seq1 = in_seq1.reshape((len(in_seq1),1))
-    in_seq2 = in_seq2.reshape((len(in_seq2),1))
-    out_seq = out_seq.reshape((len(out_seq),1))
-
-    dataset = np.hstack((in_seq1, in_seq2, out_seq))
-    X,y = split_sequences(dataset, n_steps)
-    
+    X,y = preparation_data(train, n_steps, model_input)
+        
     # Preparation data sequences VALIDATE
-    in_seq1 = np.array(validate[:,0])
-    in_seq2 = np.array(validate[:,1])
-    out_seq = np.array(validate[:,2])
-
-    in_seq1 = in_seq1.reshape((len(in_seq1),1))
-    in_seq2 = in_seq2.reshape((len(in_seq2),1))
-    out_seq = out_seq.reshape((len(out_seq),1))
-
-    dataset = np.hstack((in_seq1, in_seq2, out_seq))
-    validate_X,validate_y = split_sequences(dataset, n_steps)
+    validate_X,validate_y = preparation_data(validate, n_steps, model_input)
     
     # Preparation data sequences TEST
-    in_seq1 = np.array(test[:,0])
-    in_seq2 = np.array(test[:,1])
-    out_seq = np.array(test[:,2])
-
-    in_seq1 = in_seq1.reshape((len(in_seq1),1))
-    in_seq2 = in_seq2.reshape((len(in_seq2),1))
-    out_seq = out_seq.reshape((len(out_seq),1))
+    test_X,test_y = preparation_data(test, n_steps, model_input)
     
-    dataset = np.hstack((in_seq1, in_seq2, out_seq))
-    test_X,test_y = split_sequences(dataset, n_steps)  
         
     
     # MODEL
@@ -144,7 +119,8 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     name_model = "model_lstm_"+file_analysis.replace(".csv","")
     
     # SCHEMA MODEL MLFlow  
-    _list_input_schema  = model_input.split(',')
+    
+    _list_input_schema  = model_input[:-1]
     _list_output_schema = model_output.split(',')
     _list_input_schema = list ( set(_list_input_schema) - set(_list_output_schema))
 
@@ -164,7 +140,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['train', 'validate'], loc='upper left')
     plt.savefig(input_dir+"/lstm/"+file_analysis.replace(".csv","") + ".png")
 
     mlflow.log_artifact(input_dir+"/lstm/"+file_analysis.replace(".csv","")+".png")
@@ -191,6 +167,23 @@ def split_sequences(sequences, n_steps):
         X.append(seq_x)
         y.append(seq_y)
     return np.array(X), np.array(y)
+
+def preparation_data(data, n_steps, model_input):
+    in_seq=[]
+    # Preparation data sequences TRAIN
+    for indx in range(0,len(model_input)-1):
+        in_seq.append(np.array(data[:,indx]))
+    out_seq = np.array(data[:,len(model_input)-1])
+
+    reshape_seq = []
+
+    for in_seq_ in in_seq:
+        reshape_seq.append(in_seq_.reshape(len(in_seq_),1))
+    out_seq = out_seq.reshape((len(out_seq),1))
+    reshape_seq.append(out_seq)
+
+    dataset = np.hstack((reshape_seq))
+    return split_sequences(dataset, n_steps)
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))

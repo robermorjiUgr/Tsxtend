@@ -32,42 +32,20 @@ n_steps,epochs,hidden_units,batch_size,verbose)
 ~~~
     main.yaml
         etl:      ""
-        deepl:    ""
-        mlearn:   xgb
+        deepl:    mlp
+        mlearn:   ""
         n_rows:   0.0
         elements: ""
         output_dir: Data/test_icpe_v2
 
-    xgb.yaml
-        model_input:    air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,meter_reading
-        model_output:   meter_reading 
-        n_splits:       5
-        objective:      reg:squarederror
-        input_dir:      Data/test_icpe_v2
+    mlp.yaml
+        model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,meter_reading 
+        model_output:               meter_reading 
+        input_dir:                  Data/test_icpe_v2
+        n_steps:                    2
+        hidden_units:               50
+        epochs:                     10
+        batch_size:                 72                 1
 
 ~~~
-This algorithms perfoms through a numbers of Kfold a series  of models using XGBOOST Regressor algorithms. It goes developing predictions and storing each one of the results in the array called **scores**.
-**n_splits** will indicate us the number of times that the recived dataset will be split.  Finally, the metrics than  will be calculated are:
-
-- Scores list every Kfold.
-- mean
-- Tipic desviations
-
-Finally each model generated will be stored in mlflow.
-
-## return
-
-The metrics store are:
-- Scores list every Kfold.
-- mean
-- Tipic desviations
-~~~
-    for idx in range(len(scores)):
-            mlflow.log_metric("scores",scores[idx], step=idx+1 )
-    mlflow.log_metric("mean", np.mean(scores))
-    mlflow.log_metric("std", np.std(scores))
-~~~
-Store models:
-`mlflow.xgboost.log_model(xgb_model=xgb_model,signature=signature,artifact_path=input_dir+"/xgboost" )`
-
-[ insert img mlflow ]
+Este algoritmo consiste en un ml perceptron básico. El DataFrame usado por el algoritmo, será particionado en tres partes, una para el train, otro para el test y otra para la validation,actualmente están fijados en 70,10,20 respectivamente. Cabe destacar que los valores del DataFrame serán previamente normalizados.  A continuación, se realiza la secuenciación de los datos, pudiendo trocear los instervalos según el n_steps. Una vez obtenido los datos realizamos un modelo, usando en este caso una red Perceptron. Podemos ajustar los valores que nos ofrece el archivo yaml, pudiéndose añadir alguno otro más si lo deseamos. Finalmente se obtiene las métricas que vamos a medir de nuestro modelo como es (rmse, mae,r2). Se almacenará el modelo mlp, y se obtnedrá una gráfica que muestra la evolución del modelo a lo largo de la ejecución de las distintas épocas. El modelo será almacenado en el sistema con mlflow. 
