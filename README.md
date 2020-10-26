@@ -19,21 +19,21 @@ The modules that include this tool are the next:
     
     - [VISUALIZATION.](docs/visualization.md)
     - [PARTITION DATA.](docs/partition-data.md)
-    - [MISSING VALUES.](docs/partition-data.md)
-    - [FEATURES SELECTIONS.](docs/partition-data.md)
+    - [MISSING VALUES.](docs/missing-values.md)
+    - [FEATURES SELECTIONS.](docs/feature-selection.md)
 
 - MLearn
 
   - [XGBOOST.](docs/xgb.md)
-  - [RANDOM FOREST REGRESSION.](docs/partition-data.md)
-  - [DTREE REGRESSION.](docs/partition-data.md)
+  - [RANDOM FOREST REGRESSION.](docs/rf_regression.md)
+  - [DTREE REGRESSION.](docs/dtree_regression.md)
 
 - DeepL
 
     - [CONVULATIONAL NETWORKS.](docs/xgb.md) 
-    - [LSTM.](docs/xgb.md) 
-    - [MLP.](docs/xgb.md) 
-    - [MLP HEADED.](docs/xgb.md) 
+    - [LSTM.](docs/lstm.md) 
+    - [MLP.](docs/mlp.md) 
+    - [MLP HEADED.](docs/mlp_headed.md) 
 
 ## Instalation
 
