@@ -30,7 +30,7 @@ The modules that include this tool are the next:
 
 - DeepL
 
-    - [CONVULATIONAL NETWORKS.](docs/xgb.md) 
+    - [CONVULATIONAL NETWORKS.](docs/cnn.md) 
     - [LSTM.](docs/lstm.md) 
     - [MLP.](docs/mlp.md) 
     - [MLP HEADED.](docs/mlp_headed.md) 
