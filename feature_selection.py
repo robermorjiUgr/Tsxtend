@@ -55,7 +55,8 @@ def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
         elements = [ elem for elem in elements.split(",") ]
         list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
 
-  
+    if fields_include!='None':
+        fields_include = fields_include.split(",")
     # Set Name Run
     mlflow.set_tag("mlflow.runName", "Feature Selection")
 
@@ -67,7 +68,6 @@ def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
 
         # Selections for fields DataSet
         if fields_include!='None':
-            fields_include = fields_include.split(",")
             df_origin = load_data(path_data, int(n_rows), fields_include)
         else:
             df_origin = load_data(path_data, int(n_rows))
@@ -81,8 +81,8 @@ def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
         else:
             if alg_fs == 'FSMeasures':
                 feature_data = FSMeasures(df_origin)
-            # Create to_html()
-            feature_data.to_html(input_dir+ "/FS/"+alg_fs+"/"+csv.replace(".csv",".html")) 
+                # Create to_html()
+                feature_data.to_html(input_dir+ "/FS/"+alg_fs+"/"+csv.replace(".csv",".html")) 
         
         # Create Artifacts mlflows
         mlflow.log_artifacts(input_dir+ "/FS")

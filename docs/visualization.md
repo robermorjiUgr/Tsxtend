@@ -36,7 +36,7 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
         field_y:    site_id
         graph:      line
         _resample:  W
-        measures:   None
+        measures:   meter_reading,air_temperature,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed
         input_dir:  Data/test_icpe_v2
 
     ~~~
@@ -47,22 +47,39 @@ The images generate for app, save inside folder Data/[input_dir]/visualization/
 - line:
     -   line graph
 
+This module will help us to display the values of the selected fields with the measure parameter. If measure == None it will show all DataSet fields, if on the contrary, we indicate fields, those will be shown. In the visual example, it shows us the fields meter_reading, air_temperature, dew_temperature, precip_depth_1_hr, sea_level_pressure,wind_speed.
+
 - missing values:
     -   bar
     -   dendogram
     -   matrix
    
+
 This module will help us to watch the fields than content missing values and behaviour distinct fields thought time series.
 
 ### Line
-![example temporal serie, line graph](img/v_line.png)
+![example temporal serie, line graph](img/line.png)
 
 ### Bar
-![example temporal serie, line graph](img/v_line.png)
+![example temporal serie, bar graph](img/bar.png)
 
 ### Dendogram
-![example temporal serie, line graph](img/v_line.png)
+![example temporal serie, dendogram graph](img/dendogram.png)
+
+### HeatMap
+![example temporal serie, heatmap graph](img/heatmap.png)
 
 ### Matrix
-![example temporal serie, line graph](img/v_line.png)
+![example temporal serie, matrix graph](img/matrix.png)
 
+## Return
+
+Visualization DataSet. 
+
+Save image png in:
+
+ `[input_dir]/visualization/[line,bar,dendogram,matrix,heatmap]/train_[group_by_level].csv`
+
+Save artifacts for show in mlfow ui:
+
+ `mlflow.log_artifacts(input_dir+ "/visualization")`

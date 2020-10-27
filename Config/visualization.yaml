@@ -1,6 +1,6 @@
 field_x:    timestamp
 field_y:    site_id
-graph:      line
+graph:      missing
 _resample:  W
-measures:   None
+measures:   meter_reading,air_temperature,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed
 input_dir:  Data/test_icpe_v2

@@ -32,7 +32,7 @@ def missing_values(n_rows, fields_include, input_dir,elements,alg_missing)
         alg_missing: interpolate
     ~~~
 
-Through the parameter, the algorithms will take the csv files to apply remove missing-values techniques.The selected algorithm will be indicated in the alg_missing parameters. Currently only interpolation and row removal algorithms are implemented.
+Throughs the parameters, the algorithms will take the csv files to apply remove missing-values techniques.The selected algorithm will be indicated in the alg_missing parameters. Currently only interpolation and row removal algorithms are implemented.
 
 - interpolate:
 ~~~
@@ -44,11 +44,18 @@ Through the parameter, the algorithms will take the csv files to apply remove mi
     Remove complete lines if all values are Nan.
 ~~~
 
-[Insert example imagen with missing values and without missing values]
+### Example Missing Values DataSet
+![example temporal serie, line graph](img/matrix.png)
 
-## return
+### Then apply algorithm missing values.
+![example temporal serie, line graph](img/interpolate.png)
 
-DataSet without missing values.
+## Return
+
+Save dataSet without missing values in:.
+`[input_dir]`
+
+> :warning: **Overwrite previous csv**.
 
 Save image png in:
 
@@ -56,4 +63,4 @@ Save image png in:
 
 Save artifacts for show in mlfow ui:
 
- `mlflow.log_artifacts(input_dir+ "/FS")`
+ `mlflow.log_artifacts(input_dir+ "/missing-values")`
