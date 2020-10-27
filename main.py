@@ -429,7 +429,6 @@ def workflow():
                             "artifact_uri":              active_run.info.artifact_uri,
                             "experiment_id":             active_run.info.experiment_id,
                             "run_id":                    active_run.info.run_id,
-                            "elements":                  elements,
                             "n_rows":                    n_rows,
                             "n_splits":                  parsed_yaml_file['n_splits'],
                             "input_dir":                 parsed_yaml_file['input_dir'],

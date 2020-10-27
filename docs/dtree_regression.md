@@ -46,7 +46,7 @@ max_leaf_nodes, figure, n_splits)
         output_dir: Data/test_icpe_v2
 
     dtree_regression.yaml
-        model_input:                timestamp,air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed  
+        model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed,meter_reading
         model_output:               meter_reading 
         input_dir:                  Data/test_icpe_v2
         max_depth:                  1
@@ -71,7 +71,14 @@ This algorithms perfoms through a numbers of Kfold a series  of models using DEC
 
 Finally each model generated will be stored in mlflow.
 
-## return
+### Return
+
+Save image png:
+
+`[input_dir]/decision_tree_regression/[image.png]`
+
+![dtree_regression](img/dtree.png)
+
 
 The metrics store are:
 - Scores list every Kfold.

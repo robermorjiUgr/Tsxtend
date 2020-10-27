@@ -50,7 +50,12 @@ This algorithms perfoms through a numbers of Kfold a series  of models using XGB
 
 Finally each model generated will be stored in mlflow.
 
-## return
+## Return
+Image png:
+
+`[input_dir]/xgboost/[csv]`
+
+![imagen xgboost ](img/xgboost.png)
 
 The metrics store are:
 - Scores list every Kfold.

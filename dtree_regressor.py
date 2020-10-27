@@ -33,6 +33,7 @@ from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 
 #SKLEARN
+from sklearn import tree
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.metrics import auc, accuracy_score, confusion_matrix, mean_squared_error
@@ -83,9 +84,10 @@ max_leaf_nodes, figure, n_splits):
     
     print("DECISION  TREE REGRESSOR: " + str(file_analysis))
 
-
+    import ipdb; ipdb.set_trace()
     if model_input:
-        df = df_origin.filter(  model_input.split(',') , axis=1)
+        model_input = model_input.split(',')
+        df = df_origin.filter(  model_input , axis=1)
     else:
         df = df_origin
    
@@ -97,10 +99,10 @@ max_leaf_nodes, figure, n_splits):
     ### Normalización de los datos
     scaler = MinMaxScaler(feature_range=(0, 1))
     df = scaler.fit_transform(df) 
-    
+    # import ipdb; ipdb.set_trace()
     # Revisar esto para obtener los campos necesarios.
-    X = df[:,0:-1]
-    y = df[:,-1:]
+    X = df[:,0:len(model_input)-1]
+    y = df[:,len(model_input)-1:]
 
 
     kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
@@ -121,14 +123,18 @@ max_leaf_nodes, figure, n_splits):
         mlflow.log_metric("scores",scores[idx], step=idx+1 )
     mlflow.log_metric("mean", np.mean(scores))
     mlflow.log_metric("std", np.std(scores))
-
     
-    
+    model_output = model_output.split(',')
+    tree.plot_tree(dtree_model,
+                feature_names = model_input, 
+                class_names= model_output,
+                filled = True)
+    plt.savefig(input_dir+ "/decision_tree_regressor/"+file_analysis.replace(".csv",'.png')) 
     name_model = "model_dtree_regressor_"+file_analysis.replace(".csv","")
     
     # SCHEMA MODEL MLFlow   
-    _list_input_schema  = model_input.split(',')
-    _list_output_schema = model_output.split(',')
+    _list_input_schema  = model_input
+    _list_output_schema = model_output
     _list_input_schema = list ( set(_list_input_schema) - set(_list_output_schema))
 
     _listColSpec= [ColSpec("double",item) for item in _list_input_schema]
