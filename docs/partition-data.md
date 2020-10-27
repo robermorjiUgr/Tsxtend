@@ -41,17 +41,18 @@ def PartitionDF(date_init, date_end, path_data, n_rows,fields_include,group_by_p
         output_dir: Data/test_icpe_v2
     ~~~
 
-Selection date init  and date end in order to that the algorithms split origin dataset. If selection fields include split only realice with this fields selections. Path_data will be the path where get DataSet split. group_by_parent is params very important, ya que, group by dataset with varios levels. 
+Selection date init  and date end in order to that the algorithms split origin dataset. If selection fields include split only realice with this fields selections. Path_data will be the path where get DataSet split. Group_by_parent is params very important, because,it groups the dataset in several levels.
 
-En algunas ocasiones, it need  split DataSet use any conditions, for example, meter, site_id ... With this option could group by DataSet and then split for this fields. Example: group_by_parent:meter,site_id,building, creará una serie de DataSet donde para cada valor del padre, en este caso meter, y cada site_id y building_id. 
+In some cases, it need  split DataSet use any conditions, for example, meter, site_id ... With this option could group by DataSet and then split for this fields. Example: group_by_parent:meter,site_id,building, will create several DataSets where for each value of the parent, in this case meter, it will group them by site_id and later by building_id. 
 
-Sería una agrupación de tres condiciones para ir creando los distintos DataSet. Para ello se crea un árbol que por recursividad va formando las distintas consultas que posteriormente el sistema irá realizando e  irá creando los distintos CSV's. Muy importante, es que e árbol se creará de izquierda a derecha, es decir, el padre sería meter, los hijos serían los valores únicos de site_id y los nietos, en este caso, serían los valores únicos de building_id. Se debe tener en cuenta que cuanto más valores se inserten en este campo, más profundo será el árbol y más computación necesitará para obtener la solución.  
+In this case, it would be a grouping of three conditions to create the different DataSets.  For it, a tree is created, and through recursivity, it will build the different queries that later the system will do, to create the different CSV. To take into account, it is that the tree will be created from left to right, that is to say, the father would be 'meter', the children would be the unique values of site_id and the grandchildren, in this case, would be the unique values of building_id. It must be taken into account that the more values inserted in this field, the deeper the tree will be and the more computation it will need to obtain the solution.  
 
-Finally the result will be save in the directory definido in the params output_dir. 
+Finally the result will be save in the directory defined in the output_dir parameters.
 
-[Tree Imagen]
+![example temporal serie, line graph](img/tree_group.png)
+
 
 ## Return
--   Los csv obtenidos de la partición del DataSet original. Se guardarán en output_dir
--   Transformará los csv en html para que puedan ser consultados con la interfaz de usuario de MLFlow. 
+-   The csv's obtained from the original DataSet partition. They will be saved in output_dir.
+-   It will transform the csvs into html so that they can be consulted with the MLFlow user interface. 
 

@@ -14,54 +14,7 @@ import numpy as np
 #OWNER
 import Collection.collection  as collect
 
-class Arbol:
-    def __init__(self, elemento):
-        self.hijos = []
-        self.elemento = elemento
 
-def agregarElemento(arbol, elemento, elementoPadre):
-    subarbol = buscarSubarbol(arbol, elementoPadre);
-    subarbol.hijos.append(Arbol(elemento))
-
-def buscarSubarbol(arbol, elemento):
-    if arbol.elemento == elemento:
-        return arbol
-    for subarbol in arbol.hijos:
-        arbolBuscado = buscarSubarbol(subarbol, elemento)
-        if (arbolBuscado != None):
-            return arbolBuscado
-    return None   
-
-def createQuery(level,last_level,lista_groups, arbol, elementoPadre):
-    _l_tupla=[]
-    if level == 0 and level!=last_level:
-        query=[]  
-        arbol = Arbol(elementoPadre)
-        _l_tupla=createQuery(level+1,last_level,lista_groups,arbol, elementoPadre)
-        for item_tupla  in _l_tupla:
-            tupla=[]
-            for t in item_tupla:
-                tupla.append( t )
-            query.append(tupla)
-        return query
-    elif level != last_level:
-        for elem in lista_groups[level]:
-            agregarElemento( arbol,elem,elementoPadre )
-            _l_tupla.append(createQuery(level+1,last_level, lista_groups,arbol, elem))
-        return _l_tupla
-    else:
-        lista_tupla = []
-        if level == 0:
-            arbol = Arbol(elementoPadre)
-            tupla = elementoPadre
-            lista_tupla.append(tupla)
-        else:
-            for elem in lista_groups[level]:
-                agregarElemento( arbol,elem,elementoPadre )
-                tupla = [ elementoPadre,elem ]
-                lista_tupla.append(tupla)
-        # import ipdb; ipdb.set_trace()
-        return lista_tupla
 
 
 @click.command(
@@ -81,7 +34,8 @@ fields_include,group_by_parent, output_dir):
     mlflow.set_tag("mlflow.runName", "Data Partition")
     date_init = pd.to_datetime(date_init,format="%Y-%m-%d %H:%M:%S")
     date_end  = pd.to_datetime(date_end,format="%Y-%m-%d %H:%M:%S")
-    import ipdb; ipdb.set_trace()
+    
+
     if not os.path.exists(output_dir+ "/partition_data"):
         os.makedirs(output_dir+ "/partition_data")  
 
@@ -133,13 +87,61 @@ fields_include,group_by_parent, output_dir):
             if not df_final.empty:
                 print("Creation trainning partitions: " + name_csv)
                 create_csv(df_final, output_dir, name_csv,index=True)
-                df_final.to_html(output_dir+ "/parition_data") 
+                df_final.to_html(output_dir+ "/partition_data/"+name_csv.replace(".csv",".html")) 
             else:
                 print("Not creation trainning partitions: " + name_csv + " DataFrame have not values")
     import ipdb; ipdb.set_trace()
        
     mlflow.log_artifacts(output_dir+ "/partition_data")
 
+class Arbol:
+    def __init__(self, elemento):
+        self.hijos = []
+        self.elemento = elemento
+
+def agregarElemento(arbol, elemento, elementoPadre):
+    subarbol = buscarSubarbol(arbol, elementoPadre);
+    subarbol.hijos.append(Arbol(elemento))
+
+def buscarSubarbol(arbol, elemento):
+    if arbol.elemento == elemento:
+        return arbol
+    for subarbol in arbol.hijos:
+        arbolBuscado = buscarSubarbol(subarbol, elemento)
+        if (arbolBuscado != None):
+            return arbolBuscado
+    return None   
+
+def createQuery(level,last_level,lista_groups, arbol, elementoPadre):
+    _l_tupla=[]
+    if level == 0 and level!=last_level:
+        query=[]  
+        arbol = Arbol(elementoPadre)
+        _l_tupla=createQuery(level+1,last_level,lista_groups,arbol, elementoPadre)
+        for item_tupla  in _l_tupla:
+            tupla=[]
+            for t in item_tupla:
+                tupla.append( t )
+            query.append(tupla)
+        return query
+    elif level != last_level:
+        for elem in lista_groups[level]:
+            agregarElemento( arbol,elem,elementoPadre )
+            _l_tupla.append(createQuery(level+1,last_level, lista_groups,arbol, elem))
+        return _l_tupla
+    else:
+        lista_tupla = []
+        if level == 0:
+            arbol = Arbol(elementoPadre)
+            tupla = elementoPadre
+            lista_tupla.append(tupla)
+        else:
+            for elem in lista_groups[level]:
+                agregarElemento( arbol,elem,elementoPadre )
+                tupla = [ elementoPadre,elem ]
+                lista_tupla.append(tupla)
+        # import ipdb; ipdb.set_trace()
+        return lista_tupla
 
 def _format_name_csv(elementos):
     lista_elementos = elementos.split("&")

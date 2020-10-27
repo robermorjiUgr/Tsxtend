@@ -605,14 +605,14 @@ def workflow():
                         
                         mlp_headed = _get_or_run("mlp_headed", parameters=parameters)  
                     
-                    if not os.path.exists(str(output_dir)+"/"+item+"/parameters/"):
-                        os.makedirs(str(output_dir)+"/"+item+"/parameters/")
+                    # if not os.path.exists(str(output_dir)+"/"+item+"/parameters/"):
+                    #     os.makedirs(str(output_dir)+"/"+item+"/parameters/")
                     
-                    with open(str(output_dir)+"/"+item+"/parameters/"+csv.replace(".csv",".txt"), "w") as f:
-                        # f.writelines(item + "\n")                    
-                        f.write(json.dumps(parameters,indent=4,sort_keys=True))
-                        f.write("\n")
-                        f.close()      
+                    # with open(str(output_dir)+"/"+item+"/parameters/"+csv.replace(".csv",".txt"), "w") as f:
+                    #     # f.writelines(item + "\n")                    
+                    #     f.write(json.dumps(parameters,indent=4,sort_keys=True))
+                    #     f.write("\n")
+                    #     f.close()      
 
         if output_dir!=None:
             mlflow.log_artifacts(output_dir)
