@@ -54,7 +54,7 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits)
         output_dir: Data/test_icpe_v2
 
     rf_regression.yaml
-        model_input:              timestamp,air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed  
+        model_input:              air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed,meter_reading  
         model_output:             meter_reading 
         input_dir:                Data/test_icpe_v2
         n_estimators:             100
@@ -87,7 +87,14 @@ This algorithms perfoms through a numbers of Kfold a series  of models using RAN
 
 Finally each model generated will be stored in mlflow.
 
-## return
+### Return
+
+Save image png:
+
+`[input_dir]/rf_regression/[image.png]`
+
+![rf_regression](img/rf.png)
+
 
 The metrics store are:
 - Scores list every Kfold.

@@ -32,7 +32,7 @@ n_steps,epochs,hidden_units,batch_size,verbose)
 ~~~
     main.yaml
         etl:      ""
-        deepl:    mlp
+        deepl:    mlp_headed
         mlearn:   ""
         n_rows:   0.0
         elements: ""
@@ -49,4 +49,27 @@ n_steps,epochs,hidden_units,batch_size,verbose)
         verbose:                    1        1
 
 ~~~
-Este algoritmo consiste en una evolución de un clásico perceptron. El DataFrame usado por el algoritmo, será particionado en tres partes, una para el train, otro para el test y otra para la validation,actualmente están fijados en 70,10,20 respectivamente. Cabe destacar que los valores del DataFrame serán previamente normalizados.  A continuación, se realiza la secuenciación de los datos, pudiendo trocear los instervalos según el n_steps. Una vez obtenido los datos realizamos un modelo, usando en este caso una red Perceptron. Podemos ajustar los valores que nos ofrece el archivo yaml, pudiéndose añadir alguno otro más si lo deseamos. Finalmente se obtiene las métricas que vamos a medir de nuestro modelo como es (rmse, mae,r2). Se almacenará el modelo mlp, y se obtnedrá una gráfica que muestra la evolución del modelo a lo largo de la ejecución de las distintas épocas. El modelo será almacenado en el sistema con mlflow. 
+This algorithm consists of a Multilayer Perceptron with Multiple Input Series. The DataFrame used by the algorithm will be partitioned into three parts, one for the train, one for the test and one for the validation, currently set at 70,10,20 respectively. It should be noted that the values of the DataFrame will be previously normalized.  Then, the data will be sequenced, and the intervals can be chopped up according to the n_steps. Once the data has been obtained, we make as many models as entries we have, using in this case a Perceptron network. We can adjust the values offered by the yaml file, being able to add some more if we wish. Finally we obtain the metrics that we are going to measure from our model as it is (rmse, mae,r2). The Perceptron Multilayer with Multiple Input Series model will be stored, and a graph will be obtained showing the evolution of the model along the execution of the different periods. The model will be stored in the system with mlflow. 
+
+### Return
+
+Save image png:
+
+`[input_dir]/mlp_headed/[image.png]`
+
+![mlp](img/mlp_headed.png)
+
+
+The metrics store are:
+- rmse
+- mae
+- r2
+
+~~~
+    mlflow.log_metric("rmse", rmse)
+    mlflow.log_metric("mae", mae)
+    mlflow.log_metric("r2",r2)
+~~~
+
+Store models:
+`mlflow.keras.log_model(keras_model=model,signature=signature,artifact_path=input_dir+"/mlp_headed")`

@@ -1,6 +1,6 @@
 etl:      ""
-deepl:    ""
-mlearn:   dtree_regressor
+deepl:    cnn
+mlearn:   ""
 n_rows:   0.0
 elements: ""
 input_dir: Data/test_icpe_v2

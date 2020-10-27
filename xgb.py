@@ -74,8 +74,9 @@ model_input,model_output,n_splits, objective ):
     print("XGBOOST: " + str(file_analysis))
     
     # Field Input Model
-    if model_input!=None:
-        df = df_origin.filter(  model_input.split(',') , axis=1)
+    if model_input:
+        model_input = model_input.split(',')
+        df = df_origin.filter(  model_input , axis=1)
     else:
         df = df_origin
 
@@ -83,9 +84,10 @@ model_input,model_output,n_splits, objective ):
     # Data Normalize
     scaler = MinMaxScaler(feature_range=(0, 1))
     df = scaler.fit_transform(df) 
-    # Revisar esto para obtener los campos necesarios.
-    X = df[:,0:-1]
-    y = df[:,-1:]
+    # X: All columns except last columns.
+    # y: last column.
+    X = df[:,0:len(model_input)-1]
+    y = df[:,len(model_input)-1:]
 
 
     kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
@@ -119,7 +121,7 @@ model_input,model_output,n_splits, objective ):
     name_model = "model_xgboost_"+file_analysis.replace(".csv","")
 
     # SCHEMA MODEL MLFlow           
-    _list_input_schema  = model_input.split(',')
+    _list_input_schema  = model_input
     _list_output_schema = model_output.split(',')
     _list_input_schema = list ( set(_list_input_schema) - set(_list_output_schema))
 

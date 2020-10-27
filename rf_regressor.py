@@ -33,6 +33,7 @@ from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 
 #SKLEARN
+from sklearn import tree
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.metrics import auc, accuracy_score, confusion_matrix, mean_squared_error
@@ -96,7 +97,8 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     print("RANDOM FOREST REGRESSOR: " + str(file_analysis))
 
     if model_input:
-        df = df_origin.filter(  model_input.split(',') , axis=1)
+        model_input = model_input.split(',')
+        df = df_origin.filter(  model_input , axis=1)
     else:
         df = df_origin
     
@@ -120,8 +122,8 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     
     # X: All columns except last columns.
     # y: last column.
-    X = df[:,0:-1]
-    y = df[:,-1:]
+    X = df[:,0:len(model_input)-1]
+    y = df[:,len(model_input)-1:]
 
 
     kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
@@ -143,12 +145,19 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     mlflow.log_metric("mean", np.mean(scores))
     mlflow.log_metric("std", np.std(scores))
     
-    
-    
+    fn=model_input
+    cn=model_output
+    # fig, axes = plt.subplots(nrows = 1,ncols = 1,figsize = (4,4), dpi=800)
+    tree.plot_tree(rfr_model.estimators_[0],
+                feature_names = fn, 
+                class_names=cn,
+                filled = True);
+
+    plt.savefig(input_dir+ "/rf_regressor/"+file_analysis.replace(".csv",'.png')) 
     name_model = "model_rf_regressor_"+file_analysis.replace(".csv","")
     
     # SCHEMA MODEL MLFlow               
-    _list_input_schema  = model_input.split(',')
+    _list_input_schema  = model_input
     _list_output_schema = model_output.split(',')
     _list_input_schema = list ( set(_list_input_schema) - set(_list_output_schema))
 

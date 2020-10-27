@@ -100,7 +100,9 @@ max_leaf_nodes, figure, n_splits):
     scaler = MinMaxScaler(feature_range=(0, 1))
     df = scaler.fit_transform(df) 
     # import ipdb; ipdb.set_trace()
-    # Revisar esto para obtener los campos necesarios.
+    
+    # X: All columns except last columns.
+    # y: last column.
     X = df[:,0:len(model_input)-1]
     y = df[:,len(model_input)-1:]
 

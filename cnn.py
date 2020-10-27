@@ -143,7 +143,7 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.legend(['train', 'validate'], loc='upper left')
+    plt.legend(['train loss', 'validate loss'], loc='upper left')
     plt.savefig(input_dir+"/cnn/"+file_analysis.replace(".csv","") + ".png")
      
     mlflow.log_artifact(input_dir+"/cnn/"+file_analysis.replace(".csv","")+".png")

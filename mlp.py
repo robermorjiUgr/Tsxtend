@@ -149,7 +149,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['train loss', 'Validate loss'], loc='upper left')
     plt.savefig(input_dir+"/mlp/"+file_analysis.replace(".csv","") + ".png")
 
      

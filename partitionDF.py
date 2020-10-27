@@ -36,8 +36,8 @@ fields_include,group_by_parent, output_dir):
     date_end  = pd.to_datetime(date_end,format="%Y-%m-%d %H:%M:%S")
     
 
-    if not os.path.exists(output_dir+ "/partition_data"):
-        os.makedirs(output_dir+ "/partition_data")  
+    if not os.path.exists(output_dir+ "/partition-data"):
+        os.makedirs(output_dir+ "/partition-data")  
 
       
     if fields_include!='None':
@@ -87,12 +87,12 @@ fields_include,group_by_parent, output_dir):
             if not df_final.empty:
                 print("Creation trainning partitions: " + name_csv)
                 create_csv(df_final, output_dir, name_csv,index=True)
-                df_final.to_html(output_dir+ "/partition_data/"+name_csv.replace(".csv",".html")) 
+                df_final.to_html(output_dir+ "/partition-data/"+name_csv.replace(".csv",".html")) 
             else:
                 print("Not creation trainning partitions: " + name_csv + " DataFrame have not values")
     import ipdb; ipdb.set_trace()
        
-    mlflow.log_artifacts(output_dir+ "/partition_data")
+    mlflow.log_artifacts(output_dir+ "/partition-data")
 
 class Arbol:
     def __init__(self, elemento):

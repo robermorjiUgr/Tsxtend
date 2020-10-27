@@ -45,7 +45,7 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
         output_dir: Data/test_icpe_v2
 
     cnn.yaml
-        model_input:                timestamp,air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed  
+        model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_speed,meter_reading  
         model_output:               meter_reading 
         input_dir:                  Data/test_icpe_v2
         n_steps:                    3
@@ -59,4 +59,27 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
         verbose:                    1
     ~~~
 
-With this algotrithm, we can run Network convulations of one dimensional. El DataFrame usado por el algoritmo, será particionado en tres partes, una para el train, otro para el test y otra para la validation. Cabe destacar que los valores del DataFrame serán previamente normalizados.  A continuación, se realiza la secuenciación de los datos, pudiendo trocear los instervalos según el n_steps. Una vez obtenido los datos realizamos un modelo, usando en este caso un red convulacional de 1 Dimensión. Podemos ajustar los valores que nos ofrece el archivo yaml, pudiéndose añadir alguno otro más si lo deseamos. Finalmente se obtiene las métricas que vamos a medir de nuestro modelo como es (rmse, mae,r2). Se almacenará el modelo cnn, y se obtnedrá una gráfica que muestra la evolución del modelo a lo largo de la ejecución de las distintas épocas. 
+With this algotrithm, we can run Network convulations of one dimensional. The DataFrame used by the algorithm will be partitioned into three parts, one for the train, one for the test and one for the validation, currently set at 70,10,20 respectively. It should be noted that the values of the DataFrame will be previously normalized.  Then, the data will be sequenced, and the instervals can be split according to the n_steps. Once the data has been obtained, we make a model, using in this case a Perceptron network. We can adjust the values offered by the yaml file, being able to add some more if we wish. Finally we obtain the metrics that we are going to measure from our model as it is (rmse, mae,r2). The Perceptron Multilayer model will be stored, and a graph will be obtained showing the evolution of the model along the execution of the different periods. The model will be stored in the system with mlflow.
+
+### Return
+
+Save image png:
+
+`[input_dir]/cnn/[image.png]`
+
+![lstm](img/cnn.png)
+
+
+The metrics store are:
+- rmse
+- mae
+- r2
+
+~~~
+    mlflow.log_metric("rmse", rmse)
+    mlflow.log_metric("mae", mae)
+    mlflow.log_metric("r2",r2)
+~~~
+
+Store models:
+`mlflow.keras.log_model(keras_model=model,signature=signature,artifact_path=input_dir+"/cnn")`

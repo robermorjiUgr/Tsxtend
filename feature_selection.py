@@ -41,10 +41,10 @@ import lightgbm as lgb
 def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
     
     # Directory input dirs.
-    if not os.path.exists(input_dir+"/FS/"):
-        os.makedirs(input_dir+"/FS/")    
-    if not os.path.exists(input_dir+ "/FS/"+alg_fs+"/"):
-        os.makedirs(input_dir+ "/FS/"+alg_fs+"/")
+    if not os.path.exists(input_dir+"/feature-selection/"):
+        os.makedirs(input_dir+"/feature-selection/")    
+    if not os.path.exists(input_dir+ "/feature-selection/"+alg_fs+"/"):
+        os.makedirs(input_dir+ "/feature-selection/"+alg_fs+"/")
 
     # Lists of Files for analise
     list_file = os.listdir(input_dir)
@@ -77,15 +77,15 @@ def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
         if alg_fs == 'correlation':
             plt = correlation(df_origin)
             # Image .png correlations
-            plt.savefig(input_dir+ "/FS/"+alg_fs+"/"+csv.replace(".csv",'')+".png")
+            plt.savefig(input_dir+ "/feature-selection/"+alg_fs+"/"+csv.replace(".csv",'')+".png")
         else:
             if alg_fs == 'FSMeasures':
                 feature_data = FSMeasures(df_origin)
                 # Create to_html()
-                feature_data.to_html(input_dir+ "/FS/"+alg_fs+"/"+csv.replace(".csv",".html")) 
+                feature_data.to_html(input_dir+ "/feature-selection/"+alg_fs+"/"+csv.replace(".csv",".html")) 
         
         # Create Artifacts mlflows
-        mlflow.log_artifacts(input_dir+ "/FS")
+        mlflow.log_artifacts(input_dir+ "/feature-selection")
         
 
 def load_data(path, n_rows, fields=[]):
