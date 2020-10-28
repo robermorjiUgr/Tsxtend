@@ -46,54 +46,65 @@ fields_include,group_by_parent, output_dir):
     else:
         df_origin = load_data(path_data, int(n_rows))
         
-    #import ipdb; ipdb.set_trace()
+    
+    # GET DataSet filter for timestamp
     df_origin['timestamp'] = pd.to_datetime(df_origin['timestamp'],format="%Y-%m-%d %H:%M:%S")
     mask = ( df_origin['timestamp'] >= date_init ) & ( df_origin['timestamp'] <= date_end )
     df_origin = df_origin.loc[mask]
-    #df_origin[(df_origin['timestamp']>=date_init) & (df_origin['timestamp']<=date_end)]
     df_origin.set_index('timestamp',drop=True,inplace=True)
 
-    lista_groups = []
-    
-    group_by_parent = group_by_parent.split(",")  
-    
-    for group in group_by_parent:
-        lista_groups.append(df_origin[group].unique().tolist())
-    
-    
-    query  =  []
-    _query =  []      # Se almacenan las tuplas que conforman las consultas, formateadas
-    _l_tupla = []   # 
-    arbol = {}      # Arbol que se va formando 
-    
-    for ind in range(0,len(lista_groups[0])):
-        query.append(createQuery(0,len(lista_groups)-1,lista_groups,arbol, lista_groups[0][ind]))
-        # import ipdb; ipdb.set_trace()
-    
-    for item in query:
-        _query.append( _format_str_query(item,group_by_parent))
-        # import ipdb; ipdb.set_trace()
-    
-    for q_parent in _query:
-        for q_child in q_parent:
-            # import ipdb; ipdb.set_trace()
-            df_final = df_origin.query(q_child)
-            list_name_csv = _format_name_csv(q_child)
-            name_csv = "/train_"
-            for element in list_name_csv:
-                name_csv += "_"+element[0]+"_"+element[1].replace('/',"").replace("'","")
-            name_csv+=".csv"
-                      
-            if not df_final.empty:
-                print("Creation trainning partitions: " + name_csv)
-                create_csv(df_final, output_dir, name_csv,index=True)
-                df_final.to_html(output_dir+ "/partition-data/"+name_csv.replace(".csv",".html")) 
-            else:
-                print("Not creation trainning partitions: " + name_csv + " DataFrame have not values")
-    import ipdb; ipdb.set_trace()
+    list_groups = []
+   
+    if group_by_parent != 'None':
+        
+        group_by_parent = group_by_parent.split(",")  
+        
+        for group in group_by_parent:
+            list_groups.append(df_origin[group].unique().tolist())
+        
+        # Tree create csv for groups
+        query       =  []
+        _query      =  []    # Tuples query store
+        _l_tupla    =  []   # 
+        arbol       =  {}      # Group by field
+        
+        # Recursivity: create tree field
+        for ind in range(0,len(list_groups[0])):
+            query.append(createQuery(0,len(list_groups)-1,list_groups,arbol, list_groups[0][ind]))
+              
+        # Create queries
+        for item in query:
+            _query.append( _format_str_query(item,group_by_parent))
        
+        # CREATE DataFrame csv and html for mlflow
+        for q_parent in _query:
+            for q_child in q_parent:           
+                df_final = df_origin.query(q_child)
+                list_name_csv = _format_name_csv(q_child)
+                
+                name_csv = "/train"
+                # Name CSV
+                for element in list_name_csv:
+                    name_csv += "_"+element[0]+"_"+element[1].replace('/',"").replace("'","")
+                name_csv+=".csv"            
+                
+                if not df_final.empty:
+                    print("Creation trainning partitions: " + name_csv)
+                    create_csv(df_final, output_dir, name_csv,index=True)
+                  
+                else:
+                    print("Not creation trainning partitions: " + name_csv + " DataFrame have not values")
+    else:
+        name_csv = "/train.csv"
+        print("Creation trainning partitions: " + name_csv)
+        create_csv(df_origin, output_dir, name_csv,index=True)
+       
+
+    # MLFLOW artifact   
     mlflow.log_artifacts(output_dir+ "/partition-data")
 
+
+# Class tree. 
 class Arbol:
     def __init__(self, elemento):
         self.hijos = []
@@ -114,23 +125,43 @@ def buscarSubarbol(arbol, elemento):
 
 def createQuery(level,last_level,lista_groups, arbol, elementoPadre):
     _l_tupla=[]
+    
+    # For one fields
     if level == 0 and level!=last_level:
         query=[]  
         arbol = Arbol(elementoPadre)
         _l_tupla=createQuery(level+1,last_level,lista_groups,arbol, elementoPadre)
+        
         for item_tupla  in _l_tupla:
-            tupla=[]
+            tupla   = []
+            t_query = []
+            
             for t in item_tupla:
-                tupla.append( t )
-            query.append(tupla)
+                if isinstance(t,list):
+                    tupla   = []
+                    tupla.append(elementoPadre)
+                    for item in t:
+                        tupla.append(item)
+                    t_query.append(tupla)
+                else:                  
+                    tupla.append(t)
+            if not t_query:          
+                query.append(tupla)
+            else:
+                query.append(t_query)
         return query
+
+    # For child levels
     elif level != last_level:
         for elem in lista_groups[level]:
             agregarElemento( arbol,elem,elementoPadre )
             _l_tupla.append(createQuery(level+1,last_level, lista_groups,arbol, elem))
         return _l_tupla
+    
+    # For last level
     else:
         lista_tupla = []
+        # if level is first  and last
         if level == 0:
             arbol = Arbol(elementoPadre)
             tupla = elementoPadre
@@ -140,7 +171,7 @@ def createQuery(level,last_level,lista_groups, arbol, elementoPadre):
                 agregarElemento( arbol,elem,elementoPadre )
                 tupla = [ elementoPadre,elem ]
                 lista_tupla.append(tupla)
-        # import ipdb; ipdb.set_trace()
+        
         return lista_tupla
 
 def _format_name_csv(elementos):
@@ -148,25 +179,54 @@ def _format_name_csv(elementos):
     elementos = [ elem.replace("==","|").replace(" ","") for elem in lista_elementos ] 
     return  [ elem.split("|") for elem in elementos ]
 
+
+
 def _format_str_query(query,group_by_parent):
     _query_format = [] 
-    # import ipdb; ipdb.set_trace()
+    
     for qs in query:
-        _format_query = ""
-        c = 0
-        if len(group_by_parent)>1:
-            for group in group_by_parent:
-                if group != group_by_parent[-1]:
-                    _format_query += group+"=='"+str(qs[c])+"' & "
+        # For multiLevels
+        if isinstance (qs,list):
+            for qu in qs:               
+                if not isinstance(qu,list):
+                    _format_query = ""
+                    c = 0
+                    if len(group_by_parent)>1:
+                        
+                        for  group in group_by_parent:
+                            if group != group_by_parent[-1]:
+                                _format_query += group+"=='"+str(qs[c])+"' & "
+                            else:
+                                _format_query += group+"=='"+str(qs[c])+"'"
+                            c+=1
+                    else:
+                        for group in group_by_parent:
+                            _format_query += group+"=='"+str(qu)+"'"
+                    _query_format.append(_format_query)
+                    break
                 else:
-                    _format_query += group+"=='"+str(qs[c])+"'"
-                c+=1
+                    _format_query = ""
+                    c = 0
+                    if len(group_by_parent)>1:
+                        
+                        for  group in group_by_parent:
+                            if group != group_by_parent[-1]:
+                                _format_query += group+"=='"+str(qu[c])+"' & "
+                            else:
+                                _format_query += group+"=='"+str(qu[c])+"'"
+                            c+=1
+                    else:
+                        
+                        for group in group_by_parent:
+                            _format_query += group+"=='"+str(qs)+"'"
+                    _query_format.append(_format_query)
         else:
+            # For one levels
+            _format_query = ""
             for group in group_by_parent:
                 _format_query += group+"=='"+str(qs)+"'"
-        
-        _query_format.append(_format_query)
-    
+            _query_format.append(_format_query)
+
     return _query_format
 
 

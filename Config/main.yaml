@@ -1,7 +1,7 @@
-etl:      ""
-deepl:    cnn
+etl:      partition-data
+deepl:    ""
 mlearn:   ""
 n_rows:   0.0
 elements: ""
-input_dir: Data/test_icpe_v2
-output_dir: Data/test_icpe_v2
+input_dir: Data/ashrae_test
+output_dir: Data/ashrae_test

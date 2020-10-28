@@ -35,6 +35,18 @@ The modules that include this tool are the next:
     - [MLP.](docs/mlp.md) 
     - [MLP HEADED.](docs/mlp_headed.md) 
 
-## Instalation
+### Installation
 
+### MLFLOW
+~~~
+pip install mlflow
+~~~
+
+### MLFLOW UI
+
+~~~
+mlflow ui
+~~~
+
+### CONDA 
 

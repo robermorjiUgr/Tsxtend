@@ -1,29 +1,22 @@
 import Collection.collection  as collect
 import pandas as pd
-
+import yaml
+import ipdb
 import os
 import json
 import numpy as np
+import six
+from matplotlib import pyplot as plt
+import matplotlib.patches as mpatches
+import click
 
+# SKLEARN
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
-
-# import Preprocessing.missing_values as missing
-# import Preprocessing.outliers as outlier
-# import Preprocessing.partitionDF as partitionDF
-# import Preprocessing.feature_selection as featureSelection
-
-
-
-
-
 from sklearn import datasets
 from sklearn import svm
-# import Config.config as config
-import yaml
-import ipdb
 
-
+# KERAS
 from keras.datasets import imdb
 from keras.preprocessing import sequence
 from keras import layers
@@ -34,16 +27,12 @@ from keras.layers.merge import concatenate
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 
-from matplotlib import pyplot as plt
-import matplotlib.patches as mpatches
-import click
+
+# MLFLOW
 import mlflow
 from mlflow.utils import mlflow_tags
 from mlflow.entities import RunStatus
 from mlflow.utils.logging_utils import eprint
-import six
-
-
 from mlflow.tracking import MlflowClient, fluent
 from mlflow.tracking.fluent import _get_experiment_id_from_env,_get_experiment_id
 
@@ -93,80 +82,8 @@ def _get_or_run(entrypoint, parameters, use_cache=False):
     submitted_run = mlflow.run(".", entrypoint, parameters=parameters)
     return mlflow.tracking.MlflowClient().get_run(submitted_run.run_id)
 
-# @click.command()
-# @click.option("--mlearn", default=None, type=str)
-# @click.option("--etl", default=None, type=str)
-# @click.option("--deepl",default=None, type=str)
-# @click.option("--field_x",default=None, type=str)
-# @click.option("--field_y",default=None, type=str)
-# @click.option("--measures",default=None, type=str)
-# @click.option("--_resample",default=None, type=str) # W,M,Q,A
-# @click.option("--graph",default=None, type=str)
-# @click.option("--input_dir",default=None, type=str)
-# @click.option("--elements",default=None, type=str)
-# @click.option("--date_init", default="2016-01-01",  type=str)
-# @click.option("--date_end",  default="2016-12-31",  type=str)
-# @click.option("--path_data",  default="train.csv",  type=str)
-# @click.option("--n_rows",  default=0.0,  type=float)
-# @click.option("--fields_include", type=str,default=None, help="Campos Incluidos")
-# @click.option("--fields_exclude", type=str, default=None, help="Campos Excluidos")
-# @click.option("--group_by_parent", type=str,default=None, help="Agrupar los datos por algún campo del dataset")
-# @click.option("--group_by_child", type=str, default=None,help="Agrupar por un campo extra, agrupar a dos niveles: Parent-Child")
-# @click.option("--group_by_child_value", type=str,default=None, help="Por si quieres agrupar el Child con un valor en concreto")
-# @click.option("--output_dir", type=str,default=None)
-# @click.option("--alg_missing", type=str, default="interpolate", help="algoritmo eliminar missing values")
-# @click.option("--alg_outliers", type=str, default="z_score_method_mean", help="algoritmo eliminar outliers")
-# @click.option("--q1", type=float, default=0.25, help=" % eliminar outliers")
-# @click.option("--q3", type=float, default=0.75, help=" % eliminar outliers")
-# @click.option("--threshold", type=float, default=3.0, help="threshold")
-# @click.option("--alg_fs", type=str, default="FSMeasures", help="algoritmo seleccion de características")
-# # @click.option("--elements_predictions", type=int, default=-1, help="Campo sobre el que se va realizar la predicción: site_id, building_id, meter")
-# @click.option("--n_steps", type=int, default=3, help="n_steps redes convulacionales")
-# @click.option("--n_features", type=int, default=3, help="n_n_features")
-# @click.option("--conv_filters", type=int, default=64, help="Conv Filters")
-# @click.option("--conv_kernel_size", type=int, default=2, help="conv_kernel_size")
-# @click.option("--pool_size", type=int, default=2, help="pool_size MaxPooling1D")
-# @click.option("--epochs", type=int, default=10, help="Epochs")
-# @click.option("--hidden_units", type=int, default=50, help="Hidden Units")
-# @click.option("--batch_size", type=int, default=72, help="Batch Size")
-# @click.option("--n_splits", type=int, default=10, help="Num Splits KFold")
-# @click.option("--objective", type=str, default="reg:squarederror", help="Objective")
-# @click.option("--verbose", type=int, default=1, help="Verbose")
-# @click.option("--n_estimators", type=int, default=100, help="n_estimators")
-# @click.option("--criterion", type=str, default='mse', help="criterion")
-# @click.option("--max_depth", type=int, default=1, help="max_depth")
-# @click.option("--min_samples_split", type=int, default=2, help="min_samples_split")
-# @click.option("--min_samples_leaf", type=int, default=1, help="min_samples_leaf")
-# @click.option("--min_weight_fraction_leaf", type=float, default=0., help="min_weight_fraction_leaf")
-# @click.option("--max_features", type=str, default="auto", help="max_features")
-# @click.option("--max_leaf_nodes", type=int, default=2, help="max_leaf_nodes")
-# @click.option("--min_impurity_decrease", type=float, default=0., help="min_impurity_decrease")
-# # @click.option("--min_impurity_split", type=float, default=0., help="min_impurity_split")
-# @click.option("--bootstrap", type=str, default=True, help="bootstrap")
-# @click.option("--oob_score", type=str, default=False, help="oob_score")
-# @click.option("--n_jobs", type=int, default=-1, help="n_jobs")
-# @click.option("--random_state", type=int, default=0, help="random_state")
-# @click.option("--warm_start", type=str, default=False, help="warm_start")
-# @click.option("--ccp_alpha", type=float, default=0.0, help="ccp_alpha")
-# @click.option("--max_samples", type=str, default=None,  help="max_samples")
-# @click.option("--figure", type=str, default=False, help="figure")
-# @click.option("--splitter", type=str, default="best", help="splitter")
-# @click.option("--loss_function", type=str, default="RMSE", help="loss_function")
-# @click.option("--eval_metric", type=str, default='RMSE', help="eval_metric")
-# @click.option("--task_type", type=str, default="GPU", help="task_type")
-# @click.option("--learning_rate", type=float, default=0.01, help="learning_rate")
-# @click.option("--iterations", type=int, default=180000, help="iterations")
-# @click.option("--random_seed", type=int, default=42, help="random_seed")
-# @click.option("--l2_leaf_reg", type=int, default=5, help="l2_leaf_reg")
-# @click.option("--od_type", type=str, default="Iter", help="od_type")
-# @click.option("--depth", type=int, default=7, help="depth")
-# @click.option("--early_stopping_rounds", type=int, default=3000, help="early_stopping_rounds")
-# @click.option("--border_count", type=int, default=32, help="border_count")
-# @click.option("--model_input",default=None, type=str)
-# @click.option("--model_output",default=None, type=str)
 def workflow():
-    # import ipdb; ipdb.set_trace()
-     
+        
 
     # Get file YAML 
     m_yaml_file = open("Config/main.yaml")
