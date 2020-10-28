@@ -57,4 +57,4 @@ mlflow ui
  `mlflow run . --experiment-name=[name_experiment]`
 
 ### CONDA 
-![installation anaconda ](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages)
+[link installation anaconda ](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages)

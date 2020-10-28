@@ -1,6 +1,6 @@
 model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,meter_reading 
 model_output:               meter_reading 
-input_dir:                  Data/test_icpe_v2
+input_dir:                  Data/ashrae_test
 n_steps:                    3
 hidden_units:               50
 epochs:                     10

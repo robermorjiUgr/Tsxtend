@@ -1,6 +1,6 @@
 etl:      ""
-deepl:    ""
-mlearn:   xgb,rf_regressor,dtree_regressor
+deepl:    mlp,mlp_headed,lstm,cnn
+mlearn:   ""
 n_rows:   0.0
 elements: ""
 input_dir: Data/ashrae_test
