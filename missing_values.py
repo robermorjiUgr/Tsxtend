@@ -97,7 +97,7 @@ def missing_values(n_rows, fields_include, input_dir,elements,alg_missing):
         # Create CSV
         df_final.to_csv(path_data,encoding='utf-8')
         # Create to_html()
-        df_final.to_html((input_dir+ "/missing-values/"+csv).replace(".csv",".html"))
+        #df_final.to_html((input_dir+ "/missing-values/"+csv).replace(".csv",".html"))
 
         # Create Figure Matrix Missing Values
         msno.matrix(df_final)

@@ -37,9 +37,15 @@ The modules that include this tool are the next:
 
 ### Installation
 
+### VirtualEnv
+
+`pip3 install virtualenv`
+
+`virtualenv -p [path] venv`
+
 ### MLFLOW
 ~~~
-pip install mlflow
+pip3 install mlflow
 ~~~
 
 ### MLFLOW UI
@@ -47,6 +53,8 @@ pip install mlflow
 ~~~
 mlflow ui
 ~~~
+### PROJECT RUN
+ `mlflow run . --experiment-name=[name_experiment]`
 
 ### CONDA 
-
+![installation anaconda ](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages)
