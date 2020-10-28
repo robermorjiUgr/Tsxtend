@@ -1,6 +1,6 @@
-etl:      missing-values,feature-selection
+etl:      ""
 deepl:    ""
-mlearn:   ""
+mlearn:   xgb,rf_regressor,dtree_regressor
 n_rows:   0.0
 elements: ""
 input_dir: Data/ashrae_test
