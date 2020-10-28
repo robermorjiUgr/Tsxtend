@@ -2,4 +2,4 @@ model_input:    air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr
 model_output:   meter_reading 
 n_splits:       10
 objective:      reg:squarederror
-input_dir:      Data/test_icpe_v2
+input_dir:      Data/ashrae_test
