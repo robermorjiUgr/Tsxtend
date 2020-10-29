@@ -1,6 +1,7 @@
 # TSxtend
 ## Introduction
 
+
 TSxtend is a tool that will help to perform time series experimentation. The time series experimentation can be recorded with the help of the mlflow library.
 
 It has three modules:
@@ -17,8 +18,8 @@ The modules that include this tool are the next:
 
 - ETL
     
-    - [VISUALIZATION.](docs/visualization.md)
     - [PARTITION DATA.](docs/partition-data.md)
+    - [VISUALIZATION.](docs/visualization.md)
     - [MISSING VALUES.](docs/missing-values.md)
     - [FEATURES SELECTIONS.](docs/feature-selection.md)
 
@@ -35,26 +36,43 @@ The modules that include this tool are the next:
     - [MLP.](docs/mlp.md) 
     - [MLP HEADED.](docs/mlp_headed.md) 
 
-### Installation
+Main file config is [main.yaml](Config/main.yaml). In this file we can select the algorithms implemented etl, mlearn, deepl in our tool for our experiments. 
 
-### VirtualEnv
+We can configure:
+
+- etl: Algorithms list implemented etl. 
+- mlearn: Algorithms list implemented machine learning. 
+- deepl: Algorithms list implemented Deep Learning. 
+- n_rows: Number files show from selected DataSet.
+- element: Selection elements analice. [TO-DO]
+- input_dir: Input Directory.
+- output dir: Output Directory.
+
+Link Code: [ main.py ](main.py)
+
+
+## Installation
+
+
+
+#### VirtualEnv
 
 `pip3 install virtualenv`
 
 `virtualenv -p [path] venv`
 
-### MLFLOW
+#### MLFLOW
 ~~~
 pip3 install mlflow
 ~~~
 
-### MLFLOW UI
+#### MLFLOW UI
 
 ~~~
 mlflow ui
 ~~~
-### PROJECT RUN
+#### PROJECT RUN
  `mlflow run . --experiment-name=[name_experiment]`
 
-### CONDA 
+#### CONDA 
 [link installation anaconda ](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages)
