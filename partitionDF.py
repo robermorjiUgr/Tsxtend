@@ -20,8 +20,8 @@ import Collection.collection  as collect
 @click.command(
     help="Dado un fichero CSV, transformarlo  mlflow"
 )
-@click.option("--date_init", type=str, default="2016-01-01", help="Fecha inicio que ayuda a discriminar por estaciones")
-@click.option("--date_end",type=str, default="2016-12-31", help="Fecha final que ayuda a discriminar por estaciones")
+@click.option("--date_init", type=str, default="", help="Fecha inicio que ayuda a discriminar por estaciones")
+@click.option("--date_end",type=str, default="", help="Fecha final que ayuda a discriminar por estaciones")
 @click.option("--path_data", type=str, default="train.csv", help="Ruta del fichero CSV")
 @click.option("--n_rows", type=float, default=0, help="número de filas a extraer, 0 extrae todo")
 @click.option("--fields_include", type=str, default=None, help="Incluir los siguientes campos")
@@ -32,10 +32,11 @@ def PartitionDF(date_init, date_end, path_data, n_rows,
 fields_include,group_by_parent, output_dir):
     
     mlflow.set_tag("mlflow.runName", "Data Partition")
-    date_init = pd.to_datetime(date_init,format="%Y-%m-%d %H:%M:%S")
-    date_end  = pd.to_datetime(date_end,format="%Y-%m-%d %H:%M:%S")
+    if date_init != 'None' or date_end != 'None':
+        date_init = pd.to_datetime(date_init,format="%Y-%m-%d %H:%M:%S")
+        date_end  = pd.to_datetime(date_end,format="%Y-%m-%d %H:%M:%S")
     
-
+    import ipdb; ipdb.set_trace()
     if not os.path.exists(output_dir+ "/partition-data"):
         os.makedirs(output_dir+ "/partition-data")  
 
@@ -46,12 +47,12 @@ fields_include,group_by_parent, output_dir):
     else:
         df_origin = load_data(path_data, int(n_rows))
         
-    
-    # GET DataSet filter for timestamp
-    df_origin['timestamp'] = pd.to_datetime(df_origin['timestamp'],format="%Y-%m-%d %H:%M:%S")
-    mask = ( df_origin['timestamp'] >= date_init ) & ( df_origin['timestamp'] <= date_end )
-    df_origin = df_origin.loc[mask]
-    df_origin.set_index('timestamp',drop=True,inplace=True)
+    if date_init != 'None' or date_end != 'None':
+        # GET DataSet filter for timestamp
+        df_origin['timestamp'] = pd.to_datetime(df_origin['timestamp'],format="%Y-%m-%d %H:%M:%S")
+        mask = ( df_origin['timestamp'] >= date_init ) & ( df_origin['timestamp'] <= date_end )
+        df_origin = df_origin.loc[mask]
+        df_origin.set_index('timestamp',drop=True,inplace=True)
 
     list_groups = []
    

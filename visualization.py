@@ -31,8 +31,9 @@ import Collection.collection  as collect
 @click.option("--_resample",default=None, type=str) # W,M,Q,A
 @click.option("--input_dir",default=None, type=str)
 @click.option("--elements",default=None, type=str)
+@click.option("--timeseries",default=True, type=bool)
 
-def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir,elements):
+def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir,elements,timeseries):
     
     mlflow.set_tag("mlflow.runName", "Data Visualization")
        
@@ -50,7 +51,7 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
         list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
 
 
-
+    # import ipdb; ipdb.set_trace()
     for csv in list_file:
         print("Visualization Data: " + str(csv))
         # import ipdb; ipdb.set_trace()
@@ -58,7 +59,12 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
         # W_miss_value_name_png = ""
         path += "/"+csv
         # W_miss_value_name_png += 'ashrae_with_miss_value_site_id_' + str(n) + ".png"
+        import ipdb; ipdb.set_trace()
         df_origin = load_data(path,n_rows)
+       
+        if timeseries==True:
+            df_origin.index = pd.to_datetime(df_origin.index)
+       
         df_origin.sort_index(inplace=True)
         # draw_analize_missing_values(df_origin,W_miss_value_name_png,graph)
         list_Y = df_origin[field_y].unique().tolist()
@@ -87,22 +93,20 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
         if graph=="line":
             df_ts.fillna(0,inplace=True)
             df = df_ts
-            df[field_x] = df[field_x].apply(pd.to_datetime)
+            # df[field_x] = df[field_x].apply(pd.to_datetime)
             df.set_index(field_x,drop=True,inplace=True)
-            
-            if measures!='None':
-                #l_measure.remove(field_x)
-                df[l_measure].resample(_resample).mean().plot(grid=True)
+            if timeseries:
+                if measures!='None':
+                    df[l_measure].resample(_resample).mean().plot(grid=True)
+                else:
+                    df.resample(_resample).mean().plot(grid=True)
             else:
-                df.resample(_resample).mean().plot(grid=True)
-            #df_ts[list_Y].resample(_resample).mean().plot(grid=True)
+                df.plot(grid=True)
+
             plt.savefig(input_dir+ "/visualization/line/"+csv.replace(".csv",'')+".png")
         
         if graph=="missing":
-            # plt.rcParams['figure.figsize'] = (15, 8) # change plot size
-            # import ipdb; ipdb.set_trace()
             df = df_ts
-            df[field_x] = df[field_x].apply(pd.to_datetime)
             df.set_index(field_x,drop=True,inplace=True)
             if measures!='None':
                 msno.matrix(df[l_measure])

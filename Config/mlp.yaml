@@ -1,6 +1,6 @@
-model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,meter_reading 
-model_output:               meter_reading 
-input_dir:                  Data/ashrae_test
+model_input:                X1,X2,X3,X4,X5,X6,X7,X8,Y1
+model_output:               Y2
+input_dir:                  Data/ENB2012_data
 n_steps:                    3
 hidden_units:               50
 epochs:                     10

@@ -1,6 +1,6 @@
-date_init: 2016-01-01 00:00:00
-date_end:  2016-12-31 00:00:00
+date_init: None
+date_end:  None
 fields_include: None
-path_data: train.csv
-group_by_parent: site_id,meter
-output_dir: Data/ashrae_test
+path_data: enb2012.csv
+group_by_parent: None
+output_dir: Data/ENB2012_data

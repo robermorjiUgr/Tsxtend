@@ -153,6 +153,7 @@ def workflow():
                     "_resample":    parsed_yaml_file['_resample'],
                     "measures":     parsed_yaml_file['measures'],
                     "input_dir":    parsed_yaml_file['input_dir'],
+                    "timeseries":    parsed_yaml_file['timeseries'],
                 }
                 
                 visualization = _get_or_run("visualization_data",parameters)
@@ -404,9 +405,10 @@ def workflow():
             list_file = [ l for l in list_file if l.endswith(".csv")]
             
             # Selected particular elements for analise
-            if elements!=None:
-                elements = [ elem for elem in elements.split(",") ]
-                list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
+            # import ipdb; ipdb.set_trace()
+            # if elements!='None':
+            #     elements = [ elem for elem in elements.split(",") ]
+            #     list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
             
             for csv in list_file:
                 # Create  machine learning algorithms list.

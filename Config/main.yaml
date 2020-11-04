@@ -1,7 +1,7 @@
 etl:      ""
-deepl:    mlp,mlp_headed,lstm,cnn
+deepl:    mlp_headed
 mlearn:   ""
 n_rows:   0.0
 elements: ""
-input_dir: Data/ashrae_test
-output_dir: Data/ashrae_test
+input_dir: Data/ENB2012_data
+output_dir: Data/ENB2012_data
