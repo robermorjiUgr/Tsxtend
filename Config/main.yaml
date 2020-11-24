@@ -1,7 +1,7 @@
-etl:      ""
-deepl:    mlp_headed
+etl:      outliers-values
+deepl:    ""
 mlearn:   ""
 n_rows:   0.0
 elements: ""
-input_dir: Data/ENB2012_data
-output_dir: Data/ENB2012_data
+input_dir: Data/DAILY_FORECASTING
+output_dir: Data/DAILY_FORECASTING

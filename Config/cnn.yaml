@@ -1,12 +1,12 @@
-model_input:                X1,X2,X3,X4,X5,X6,X7,X8,Y1
-model_output:               Y2
-input_dir:                  Data/ENB2012_data
-n_steps:                    3
+model_input:                N_urgent,urgent,OrderA,OrderB,OrderC,FSector,TrafficOrder,B1,B2,B3
+model_output:               TOrders
+input_dir:                  Data/DAILY_FORECASTING
+n_steps:                    4
 n_features:                 12
 conv_filters:               32
 conv_kernel_size:           2
 pool_size:                  2
 hidden_units:               50
 epochs:                     10
-batch_size:                 72
+batch_size:                 8
 verbose:                    1

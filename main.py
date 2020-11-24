@@ -127,6 +127,27 @@ def workflow():
         for item in etl:
 
             '''
+            Analysis DataSet:
+                Algorithm that show preview studie DataSet 
+            ''' 
+            # import ipdb; ipdb.set_trace() 
+            if item=="analysis":
+                # Get File Config YAML
+                a_yaml_file = open("Config/analysis.yaml")
+                parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                print(parsed_yaml_file)
+                
+                # Parameters get from YAML file [ main, analysis ]
+                parameters = {
+                    "n_rows":       n_rows,
+                    "elements":     elements,
+                    "fields":       parsed_yaml_file['fields'],
+                    "input_dir":    parsed_yaml_file['input_dir'],
+                    
+                }
+                
+                anlysis = _get_or_run("analysis_data",parameters)
+            '''
             Visualization:
                 Algorithm is divide in two parts:
                     - First Part.
@@ -210,16 +231,18 @@ def workflow():
             ''' 
 
             if item=="outliers-values":
+                a_yaml_file = open("Config/outliers.yaml")
+                parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                print(parsed_yaml_file)
+                
                 parameters={
-                    "etl":item,
-                    "output_dir":output_dir,
                     "n_rows":n_rows,
-                    "fields_include":fields_include, 
-                    "alg_outliers":alg_outliers,
-                    "q1":q1,
-                    "q3":q3,
-                    "fields_exclude":fields_exclude,
-                    "threshold":threshold
+                    "fields_include":parsed_yaml_file['fields_include'], 
+                    "q1":parsed_yaml_file['q1'],
+                    "q3":parsed_yaml_file['q3'],
+                    "threshold":parsed_yaml_file['threshold'],
+                    "alg_outliers":parsed_yaml_file['alg_outliers'],
+                    "input_dir":parsed_yaml_file['input_dir'],
                 }
                 outliers = _get_or_run("outliers", parameters=parameters)
             '''

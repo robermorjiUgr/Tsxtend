@@ -30,13 +30,13 @@ import Collection.collection  as collect
 
 def PartitionDF(date_init, date_end, path_data, n_rows, 
 fields_include,group_by_parent, output_dir):
-    
+    # import ipdb; ipdb.set_trace()
     mlflow.set_tag("mlflow.runName", "Data Partition")
     if date_init != 'None' or date_end != 'None':
         date_init = pd.to_datetime(date_init,format="%Y-%m-%d %H:%M:%S")
         date_end  = pd.to_datetime(date_end,format="%Y-%m-%d %H:%M:%S")
     
-    import ipdb; ipdb.set_trace()
+    
     if not os.path.exists(output_dir+ "/partition-data"):
         os.makedirs(output_dir+ "/partition-data")  
 
@@ -103,6 +103,7 @@ fields_include,group_by_parent, output_dir):
 
     # MLFLOW artifact   
     mlflow.log_artifacts(output_dir+ "/partition-data")
+    mlflow.log_artifacts(output_dir)
 
 
 # Class tree. 

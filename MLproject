@@ -3,6 +3,15 @@ name: conda-tsxtend
 conda_env: conda.yaml
 
 entry_points:
+  
+  analysis_data:
+    parameters:
+      fields:  {type:str, default=None}
+      input_dir: {type:str, default=None}
+      
+    command:
+      "python3 analysis.py --fields {fields} --input_dir {input_dir}"
+  
   visualization_data:
     parameters:
       field_x:  {type:str, default=None}
@@ -39,13 +48,15 @@ entry_points:
 
   outliers:
     parameters: 
-        alg_outliers:  {type:str, default="z_score_method_mean"}
+        fields_include:  {type:str, default=None}
         q1:  {type:float, default=0.25}
         q3:  {type:float, default=0.75}
-        fields_exclude:  {type:str, default=None}
         threshold:  {type:float, default=3.0}
-    command: "python3 outliers.py --alg_outliers {alg_outliers} --q1 {q1} --q3 {q3} 
-    --fields_exclude {fields_exclude} --threshold {threshold}"
+        alg_outliers:  {type:str, default="z_score_method_mean"}
+        input_dir: {type:str, default=None}
+    command: 
+        "python3 outliers.py --fields_include {fields_include} --q1 {q1} --q3 {q3} 
+        --threshold {threshold}  --alg_outliers {alg_outliers} --input_dir {input_dir}"
   
   feature_selection:
     parameters:

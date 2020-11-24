@@ -43,7 +43,7 @@ class Collections:
     
     @staticmethod
     def readCSV (path, n_rows, fields=None):
-        
+        # import ipdb; ipdb.set_trace()
         if n_rows!=0:
             if not fields:
                 dataFrame = pd.read_csv(path, skipinitialspace=True, nrows=n_rows,index_col=0)
