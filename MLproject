@@ -51,12 +51,11 @@ entry_points:
         fields_include:  {type:str, default=None}
         q1:  {type:float, default=0.25}
         q3:  {type:float, default=0.75}
-        threshold:  {type:float, default=3.0}
         alg_outliers:  {type:str, default="z_score_method_mean"}
         input_dir: {type:str, default=None}
     command: 
         "python3 outliers.py --fields_include {fields_include} --q1 {q1} --q3 {q3} 
-        --threshold {threshold}  --alg_outliers {alg_outliers} --input_dir {input_dir}"
+         --alg_outliers {alg_outliers} --input_dir {input_dir}"
   
   feature_selection:
     parameters:

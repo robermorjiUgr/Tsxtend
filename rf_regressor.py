@@ -148,11 +148,13 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     fn=model_input
     cn=model_output
     # fig, axes = plt.subplots(nrows = 1,ncols = 1,figsize = (4,4), dpi=800)
-    tree.plot_tree(rfr_model.estimators_[0],
-                feature_names = fn, 
-                class_names=cn,
-                filled = True);
-
+    # tree.plot_tree(rfr_model.estimators_[0],
+    #             feature_names = fn, 
+    #             class_names=cn,
+    #             filled = True);
+    # plot
+    plt.title("Random Forest Regression: KFold(n_split="+str(n_splits)+")")
+    plt.bar(range(len(scores)), scores)
     plt.savefig(input_dir+ "/rf_regressor/"+file_analysis.replace(".csv",'.png')) 
     name_model = "model_rf_regressor_"+file_analysis.replace(".csv","")
     

@@ -54,79 +54,91 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
     # import ipdb; ipdb.set_trace()
     for csv in list_file:
         print("Visualization Data: " + str(csv))
-        # import ipdb; ipdb.set_trace()
-        path = input_dir
-        # W_miss_value_name_png = ""
+        
+        path = input_dir       
         path += "/"+csv
-        # W_miss_value_name_png += 'ashrae_with_miss_value_site_id_' + str(n) + ".png"
         import ipdb; ipdb.set_trace()
         df_origin = load_data(path,n_rows)
-       
-        if timeseries==True:
-            df_origin.index = pd.to_datetime(df_origin.index)
+        
+        # if timeseries==True:
+        #     df_origin.index = pd.to_datetime(df_origin.index)
        
         df_origin.sort_index(inplace=True)
-        # draw_analize_missing_values(df_origin,W_miss_value_name_png,graph)
-        list_Y = df_origin[field_y].unique().tolist()
-        # import ipdb; ipdb.set_trace()
-        X = df_origin.index.unique().tolist()
-        df_ts = pd.DataFrame(X, columns=[field_x]) # meter_reading modificar para que sea un parámetro
-        dict_field_y = {}
+        # list_Y = df_origin[field_y].unique().tolist()
+        # # import ipdb; ipdb.set_trace()
+        # X = df_origin.index.unique().tolist()
+        # df_ts = pd.DataFrame(X, columns=[field_x]) # meter_reading modificar para que sea un parámetro
+        # dict_field_y = {}
        
-       
-        if measures!='None':
-            for item in list_Y:
-                l_measure = [ m for m in measures.split(",") ]
-                #l_measure.append(field_x)
-                df =  df_origin [ df_origin[field_y]==item ][l_measure]
-                if len(list_Y)>1: # Renombrar columnas si nuestra agrupación muestra más de un elemento
-                    df.rename(columns={measures:item},inplace=True)
-        else:
-            for item in list_Y:
-                df = df_origin [ df_origin[field_y]==item ]
+        l_measure = [ m for m in measures.split(",") ]
+        df =  df_origin [l_measure]
+        # if measures!='None':
+        #     for item in list_Y:
+        #         l_measure = [ m for m in measures.split(",") ]
+        #         #l_measure.append(field_x)
+        #         df =  df_origin [ df_origin[field_y]==item ][l_measure]
+        #         if len(list_Y)>1: # Renombrar columnas si nuestra agrupación muestra más de un elemento
+        #             df.rename(columns={measures:item},inplace=True)
+        # else:
+        #     for item in list_Y:
+        #         df = df_origin [ df_origin[field_y]==item ]
         
-        df_ts = pd.merge(df_ts,df,how='left', on=field_x)
-        plt.rcParams['figure.figsize'] = (15, 8) # change plot size
+        # df.reset_index(inplace=True)
+        # df.rename(columns={'index':field_x}, inplace=True)
+        
+        
+        plt.rcParams['figure.figsize'] = (50, 50) # change plot size
         plt.rcParams["legend.loc"] = 'best'
         plt.title(csv.replace(".csv",''))
         
         if graph=="line":
-            df_ts.fillna(0,inplace=True)
-            df = df_ts
-            # df[field_x] = df[field_x].apply(pd.to_datetime)
-            df.set_index(field_x,drop=True,inplace=True)
+            df.fillna(0,inplace=True)
+                      
+            # df.set_index(field_x,drop=True,inplace=True)
             if timeseries:
+                # Group by for timestamp
+                df = df.groupby([field_x]).mean()
+                df.index = pd.to_datetime(df.index)
+                
                 if measures!='None':
                     df[l_measure].resample(_resample).mean().plot(grid=True)
                 else:
                     df.resample(_resample).mean().plot(grid=True)
             else:
                 df.plot(grid=True)
-
+            
             plt.savefig(input_dir+ "/visualization/line/"+csv.replace(".csv",'')+".png")
         
         if graph=="missing":
-            df = df_ts
-            df.set_index(field_x,drop=True,inplace=True)
+                     
             if measures!='None':
-                msno.matrix(df[l_measure])
+
+                msno.matrix(df[l_measure])                
                 plt.savefig(input_dir+ "/visualization/matrix/"+csv.replace(".csv",'')+".png")
-                msno.bar(df[l_measure])
+                
+                msno.bar(df[l_measure])               
                 plt.savefig(input_dir+ "/visualization/bar/"+csv.replace(".csv",'')+".png")
-                msno.dendrogram(df[l_measure])
+                
+                msno.dendrogram(df[l_measure])               
                 plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
-                msno.heatmap(df[l_measure])
+                
+                msno.heatmap(df[l_measure])              
                 plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
             else:
                 msno.matrix(df)
                 plt.savefig(input_dir+ "/visualization/matrix/"+csv.replace(".csv",'')+".png")
+
                 msno.bar(df)
                 plt.savefig(input_dir+ "/visualization/bar/"+csv.replace(".csv",'')+".png")
+                
                 msno.dendrogram(df)
                 plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
+
                 msno.heatmap(df)
                 plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
-    
+       
+        plt.close('all')
+
     mlflow.log_artifacts(input_dir+ "/visualization")
     
 def load_data( path, n_rows, fields=None):

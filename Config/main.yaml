@@ -1,7 +1,7 @@
-etl:      outliers-values
+etl:      visualization
 deepl:    ""
 mlearn:   ""
 n_rows:   0.0
 elements: ""
-input_dir: Data/DAILY_FORECASTING
-output_dir: Data/DAILY_FORECASTING
+input_dir: Data/DUTCH-ENERGY/endinetGAS
+output_dir: Data/DUTCH-ENERGY/endinetGAS

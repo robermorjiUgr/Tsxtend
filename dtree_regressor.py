@@ -127,10 +127,14 @@ max_leaf_nodes, figure, n_splits):
     mlflow.log_metric("std", np.std(scores))
     
     model_output = model_output.split(',')
-    tree.plot_tree(dtree_model,
-                feature_names = model_input, 
-                class_names= model_output,
-                filled = True)
+    # tree.plot_tree(dtree_model,
+    #             feature_names = model_input, 
+    #             class_names= model_output,
+    #             filled = True)
+    
+    # PLOT
+    plt.title("Decision Tree Regression: KFold(n_split="+str(n_splits)+")")
+    plt.bar(range(len(scores)), scores)
     plt.savefig(input_dir+ "/decision_tree_regressor/"+file_analysis.replace(".csv",'.png')) 
     name_model = "model_dtree_regressor_"+file_analysis.replace(".csv","")
     

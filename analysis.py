@@ -48,7 +48,7 @@ def Analysis(n_rows,fields, input_dir,elements):
     # import ipdb; ipdb.set_trace()
     for csv in list_file:
         print("Analysis Data: " + str(csv))
-        
+        name_file = str(csv).replace(".csv","")
         path = input_dir
         # W_miss_value_name_png = ""
         path += "/"+csv
@@ -63,19 +63,26 @@ def Analysis(n_rows,fields, input_dir,elements):
         df_analysis['Q3']     = df_origin.quantile(q=0.75, axis=0)
         df_analysis['Min']    = df_origin.min(axis=0)
         df_analysis['Max']    = df_origin.max(axis=0)
-        df_analysis.to_html(buf=input_dir+ "/analysis/data/summary/summary.html", justify='justify', border='border')
+        print("Create summary html")
+
+        df_analysis.to_html(buf=input_dir+ "/analysis/data/summary/summary_"+name_file+".html", justify='justify', border='border')
+        print("Create boxplot")
         fields_boxplot = [ field for field in fields.split(",") ]
         boxplot = df_origin.boxplot(column=fields_boxplot,figsize=(50,50),return_type='axes')
         plt.xlabel('Fields DataSet')
         plt.ylabel('Cantidad')
-        plt.savefig(input_dir+ "/analysis/data/bloxplot/boxplot.jpeg")
-
-        
+        plt.savefig(input_dir+ "/analysis/data/bloxplot/boxplot_"+name_file+".jpeg")
+        plt.close('all')
+        print("Create graph line")
         for field in fields_boxplot:
             df_origin[[field]].plot(grid=True)
-            plt.savefig(input_dir+ "/analysis/data/graph-line/"+field+".jpeg")
 
-    mlflow.log_artifacts(input_dir+ "/analysis")
+            if not os.path.exists(input_dir+ "/analysis/data/graph-line/"+name_file):
+                os.makedirs(input_dir+ "/analysis/data/graph-line/"+name_file)
+
+            plt.savefig(input_dir+ "/analysis/data/graph-line/"+name_file+"/"+field+".jpeg")
+            plt.close('all')
+        mlflow.log_artifacts(input_dir+ "/analysis")
     
 def load_data( path, n_rows, fields=None):
        

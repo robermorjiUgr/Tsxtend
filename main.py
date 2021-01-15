@@ -240,7 +240,6 @@ def workflow():
                     "fields_include":parsed_yaml_file['fields_include'], 
                     "q1":parsed_yaml_file['q1'],
                     "q3":parsed_yaml_file['q3'],
-                    "threshold":parsed_yaml_file['threshold'],
                     "alg_outliers":parsed_yaml_file['alg_outliers'],
                     "input_dir":parsed_yaml_file['input_dir'],
                 }
@@ -266,8 +265,8 @@ def workflow():
                 feature_fs = _get_or_run("feature_selection", parameters=parameters)
                 
 
-            if not os.path.exists(str(output_dir)+"/"+item+"/parameters/"):
-                os.makedirs(str(output_dir)+"/"+item+"/parameters/")
+            # if not os.path.exists(str(output_dir)+"/"+item+"/parameters/"):
+            #     os.makedirs(str(output_dir)+"/"+item+"/parameters/")
             
             # Save parameters use in the execution.
             # Item is the name algorithms run.
@@ -413,14 +412,14 @@ def workflow():
                         }
                         catboost = _get_or_run("catboost", parameters=parameters) 
                     
-                    if not os.path.exists(str(output_dir)+"/"+item+"/parameters/"):
-                        os.makedirs(str(output_dir)+"/"+item+"/parameters/")  
+                    # if not os.path.exists(str(output_dir)+"/"+item+"/parameters/"):
+                    #     os.makedirs(str(output_dir)+"/"+item+"/parameters/")  
                     
-                    with open(str(output_dir)+"/"+item+"/parameters/"+csv.replace(".csv",".txt"), "w") as f:
-                        # f.writelines(item + "\n")                    
-                        f.write(json.dumps(parameters,indent=4,sort_keys=True))
-                        f.write("\n")
-                        f.close()
+                    # with open(str(output_dir)+"/"+item+"/parameters/"+csv.replace(".csv",".txt"), "w") as f:
+                    #     # f.writelines(item + "\n")                    
+                    #     f.write(json.dumps(parameters,indent=4,sort_keys=True))
+                    #     f.write("\n")
+                    #     f.close()
 
         if deepl:
             # Lists of Files for analise

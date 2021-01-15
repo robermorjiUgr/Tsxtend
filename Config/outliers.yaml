@@ -1,6 +1,5 @@
 fields_include: N_urgent,urgent,OrderA,OrderB,OrderC,FSector,TrafficOrder,B1,B2,B3,TOrders
 q1: 0.25
 q3: 0.75
-threshold: 3.0
 alg_outliers: z_score_method_mean
 input_dir: Data/DAILY_FORECASTING

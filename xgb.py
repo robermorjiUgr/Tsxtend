@@ -115,8 +115,11 @@ model_input,model_output,n_splits, objective ):
     mlflow.log_metric("std", np.std(scores))
 
     print(xgb_model.feature_importances_)
-    # plot
-    plt.bar(range(len(xgb_model.feature_importances_)), xgb_model.feature_importances_)
+    
+    # PLOT
+    plt.title("XGBOOST Regression: KFold(n_split="+str(n_splits)+")")
+    plt.bar(range(len(scores)), scores)
+    # plt.bar(range(len(xgb_model.feature_importances_)), xgb_model.feature_importances_)
     plt.savefig(input_dir+ "/xgboost/"+file_analysis.replace(".csv",'.png')) 
     name_model = "model_xgboost_"+file_analysis.replace(".csv","")
 

@@ -26,12 +26,9 @@ from impyute.imputation.cs import fast_knn, mice
 @click.option("--alg_outliers", type=str, default="z_score_method_mean", help="algoritmo eliminar outliers")
 @click.option("--q1", type=float, default=0.25, help=" % eliminar outliers")
 @click.option("--q3", type=float, default=0.75, help=" % eliminar outliers")
-# @click.option("--fields_exclude", type=str, default=None, help="Campos Excluidos outliers")
-@click.option("--threshold", type=float, default=3.0, help="threshold")
 
 
-
-def outliers(input_dir,n_rows,q1,q3,fields_include,alg_outliers,threshold):
+def outliers(input_dir,n_rows,q1,q3,fields_include,alg_outliers):
     mlflow.set_tag("mlflow.runName", "Data Outliers")
     
     if not os.path.exists(input_dir+ "/outliers-values"):
@@ -105,69 +102,6 @@ def z_score_method_mean(df,q1,q3,fields_include,input_dir):
     return df
 
 
-# def z_score_method( df, threshold, fields_exclude, fields_include ):
-    
-#     #Excluyo meter, id_building y timestamp
-#     df.index.name = 'index'
-#     processing_include = df.filter(fields_include, axis=1)
-#     processing_exclude = df.filter(fields_exclude, axis=1)
-    
-#     processing_include[(np.abs(stats.zscore(processing_include)) < threshold).all(axis=1)]
-#     # Hago un merge con los dos DataFrame
-#     df = pd.merge(processing_exclude, processing_include,how='inner', on='index' )
-#     return df
-
-# """
-# def gaussian 
-# Función que calcula la función gaussiana de un elemento
-
-# params:
-# mu => Media 
-# sigma2 = > varianza
-# x => valor
-
-# f(x) = 1 / sqrt( 2 * pi * sigma2 )^ e -( x - mu )^2 / 2*sigma2
-
-# return:
-# devuelve  el valor de la gaussiana
-
-# """
-
-# def gaussian(mu, sigma2, x):
-
-#     coefficient = 1.0/sqrt(2.0 * pi * sigma2)
-#     exponential = exp ( -0.5 * ( x - mu ) ** 2 / sigma2 )
-#     return coefficient * exponential
-
-
-# def update(mean1, var1, mean2, var2):
-#     new_mean = ( var2*mean1 + var1*mean2) /( var2+var1 )
-#     new_var  = 1 / ( 1 / var2 + 1/ var1 )
-
-#     return [new_mean, new_var]
-
-
-# def predict( mean1, var1, mean2, var2):
-#     new_mean = mean1 + mean2
-#     new_var = var1 + var2
-
-#     return [ new_mean, new_var]
-
-# """
-# def KalmanFilter( timestamp, train )
-# """    
-
-# def KalmanFilter( timestamp, train ):
-    
-#     mu  = train[0]
-#     sig = 10000 
-#     for n in range (len(timestamp)-1):
-#         mu, sig = Outliers.update(mu,sig, timestamp[n], timestamp[n+1])
-#         print ("Update => ",mu,sig )
-        
-#         mu, sig = Outliers.predict(mu,sig,train[n], train[n+1] )
-#         print ("Prediction => ",mu,sig )
-#     return [mu, sig]
 
 if __name__=="__main__":
     outliers()

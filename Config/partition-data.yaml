@@ -1,6 +1,6 @@
-date_init: None
-date_end:  None
+date_init: 2016-01-01
+date_end:  2016-12-31
 fields_include: None
-path_data: forecasting_order_new.csv
-group_by_parent: None
-output_dir: Data/DAILY_FORECASTING
+path_data: CSV/ashrae.csv
+group_by_parent: site_id,meter
+output_dir: Data/ASHRAE/ashrae
