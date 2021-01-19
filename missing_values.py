@@ -74,7 +74,7 @@ def missing_values(n_rows, fields_include, input_dir,elements,alg_missing):
         # PATH DATA
         path_data = input_dir + "/" + csv
                
-        # Selections for fields DataSet
+        # Selecting of fields
         if fields_include!='None':
             fields_include = fields_include.split(",")
             df_origin = load_data(path_data, int(n_rows), fields_include)
@@ -85,23 +85,43 @@ def missing_values(n_rows, fields_include, input_dir,elements,alg_missing):
         if not os.path.exists(input_dir+ "/missing-values/"+alg_missing+"/"):
             os.makedirs(input_dir+ "/missing-values/"+alg_missing+"/")
 
-        # Algorithms missing values
-        if alg_missing == 'interpolate':
-            df_final = interpolate(df_origin)
-        elif alg_missing == 'drop':
-            df_final = DropMissingValues(df_origin)
+    
+        
+        if alg_missing == 'visualization':
+            # Graphs to comprobate if there is missing values in DataSet
+            if not os.path.exists(input_dir+ "/missing-values/"+alg_missing+"/matrix/"):
+                os.makedirs(input_dir+ "/missing-values/"+alg_missing+"/matrix/")
+            if not os.path.exists(input_dir+ "/missing-values/"+alg_missing+"/bar/"):
+                os.makedirs(input_dir+ "/missing-values/"+alg_missing+"/bar/")
+
+            if fields_include!='None':
+                # Selecting of fields
+                msno.matrix(df_origin[fields_include])                
+                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/matrix/"+csv.replace(".csv",'')+".png")
                 
-        # Fill values 0.0 values NAN
-        df_final.fillna(0.0, inplace=True)
+                msno.bar(df_origin[fields_include])               
+                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/bar/"+csv.replace(".csv",'')+".png")
+            else:
+                # Completing DataSet
+                msno.matrix(df_origin)
+                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/matrix/"+csv.replace(".csv",'')+".png")
+                
+                msno.bar(df_origin)
+                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/bar/"+csv.replace(".csv",'')+".png")
+            
+        else:
+            # Algorithms missing values
+            if alg_missing == 'interpolate':
+                df_final = interpolate(df_origin)
 
-        # Create CSV
-        df_final.to_csv(path_data,encoding='utf-8')
-        # Create to_html()
-        #df_final.to_html((input_dir+ "/missing-values/"+csv).replace(".csv",".html"))
-
-        # Create Figure Matrix Missing Values
-        msno.matrix(df_final)
-        plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/"+csv.replace(".csv",'')+".png") 
+            elif alg_missing == 'drop':
+                df_final = DropMissingValues(df_origin)
+            
+            # Fill values 0.0 values NAN
+            df_final.fillna(0.0, inplace=True)            
+            # Create CSV to continue experimentation
+            df_final.to_csv(path_data,encoding='utf-8')
+     
         # Create Artifacts mlflows
         mlflow.log_artifacts(input_dir+ "/missing-values")
         

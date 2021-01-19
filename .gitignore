@@ -2,6 +2,8 @@ __pycache__/
 mlruns/
 *.csv
 Data/
-
+JupyterNoteBook/
+.*
+Config/*.yaml
 # Provisionalmente porque todavía no está acabado
 cboost.py

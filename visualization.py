@@ -60,52 +60,51 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
         import ipdb; ipdb.set_trace()
         df_origin = load_data(path,n_rows)
         
-        # if timeseries==True:
-        #     df_origin.index = pd.to_datetime(df_origin.index)
-       
-        df_origin.sort_index(inplace=True)
-        # list_Y = df_origin[field_y].unique().tolist()
-        # # import ipdb; ipdb.set_trace()
-        # X = df_origin.index.unique().tolist()
-        # df_ts = pd.DataFrame(X, columns=[field_x]) # meter_reading modificar para que sea un parámetro
-        # dict_field_y = {}
-       
+            
+        df_origin.sort_index(inplace=True)       
         l_measure = [ m for m in measures.split(",") ]
         df =  df_origin [l_measure]
-        # if measures!='None':
-        #     for item in list_Y:
-        #         l_measure = [ m for m in measures.split(",") ]
-        #         #l_measure.append(field_x)
-        #         df =  df_origin [ df_origin[field_y]==item ][l_measure]
-        #         if len(list_Y)>1: # Renombrar columnas si nuestra agrupación muestra más de un elemento
-        #             df.rename(columns={measures:item},inplace=True)
-        # else:
-        #     for item in list_Y:
-        #         df = df_origin [ df_origin[field_y]==item ]
         
-        # df.reset_index(inplace=True)
-        # df.rename(columns={'index':field_x}, inplace=True)
+        # plt.rcParams['figure.figsize'] = (50, 50) # change plot size
+        # plt.rcParams["legend.loc"] = 'best'
+        # plt.title(csv.replace(".csv",''))
         
-        
-        plt.rcParams['figure.figsize'] = (50, 50) # change plot size
-        plt.rcParams["legend.loc"] = 'best'
-        plt.title(csv.replace(".csv",''))
+        df = df.fillna(0)
+        if timeseries:
+            # Group by for timestamp
+            df = df.groupby([field_x]).mean()
+            df.index = pd.to_datetime(df.index)
+            
+            if measures!='None':
+                df[l_measure].resample(_resample).mean()
+            else:
+                df.resample(_resample).mean()
+       
         
         if graph=="line":
-            df.fillna(0,inplace=True)
+            # df.fillna(0,inplace=True)
                       
             # df.set_index(field_x,drop=True,inplace=True)
-            if timeseries:
-                # Group by for timestamp
-                df = df.groupby([field_x]).mean()
-                df.index = pd.to_datetime(df.index)
+            # if timeseries:
+            #     # Group by for timestamp
+            #     df = df.groupby([field_x]).mean()
+            #     df.index = pd.to_datetime(df.index)
                 
-                if measures!='None':
-                    df[l_measure].resample(_resample).mean().plot(grid=True)
-                else:
-                    df.resample(_resample).mean().plot(grid=True)
-            else:
-                df.plot(grid=True)
+            #     if measures!='None':
+            #         df[l_measure].resample(_resample).mean().plot(grid=True)
+            #     else:
+            #         df.resample(_resample).mean().plot(grid=True)
+            # else:
+            data1  = df.index.values
+            data2  = df.values
+            labels = df.columns.values
+            labels = labels.tolist()
+            fig, ax = plt.subplots()  # Create a figure and an axes.
+            plt.plot(data1,data2)                       
+            ax.set_xlabel('Step')  # Add an x-label to the axes.
+            ax.set_ylabel('values')  # Add a y-label to the axes.
+            ax.set_title(csv.replace(".csv",""))  # Add a title to the axes.
+            ax.legend(labels)  # Add a legend.
             
             plt.savefig(input_dir+ "/visualization/line/"+csv.replace(".csv",'')+".png")
         
@@ -119,11 +118,11 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
                 msno.bar(df[l_measure])               
                 plt.savefig(input_dir+ "/visualization/bar/"+csv.replace(".csv",'')+".png")
                 
-                msno.dendrogram(df[l_measure])               
-                plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
+                # msno.dendrogram(df[l_measure])               
+                # plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
                 
-                msno.heatmap(df[l_measure])              
-                plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
+                # msno.heatmap(df[l_measure])              
+                # plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
             else:
                 msno.matrix(df)
                 plt.savefig(input_dir+ "/visualization/matrix/"+csv.replace(".csv",'')+".png")
@@ -131,11 +130,11 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
                 msno.bar(df)
                 plt.savefig(input_dir+ "/visualization/bar/"+csv.replace(".csv",'')+".png")
                 
-                msno.dendrogram(df)
-                plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
+                # msno.dendrogram(df)
+                # plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
 
-                msno.heatmap(df)
-                plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
+                # msno.heatmap(df)
+                # plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
        
         plt.close('all')
 

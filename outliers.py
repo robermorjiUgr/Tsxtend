@@ -50,13 +50,31 @@ def outliers(input_dir,n_rows,q1,q3,fields_include,alg_outliers):
             df_outliers = load_data(path,n_rows,fields_include)
         else:
             df_outliers = df_origin
-               
-        if alg_outliers == 'z_score_method_mean':
-            df_final = z_score_method_mean(df_outliers,q1,q3,fields_include,input_dir)
-       
-        # Update columns remove outliers in the Origin DataSet
-        df_origin.update(df_final)
-        df_origin.to_csv(path,encoding='utf-8')
+
+        if alg_outliers == 'visualization':
+            ### CREATE BOXPLOT
+            # import ipdb; ipdb.set_trace()
+            print("Create boxplot")
+            name_file = csv.replace(".csv","")
+            fields_boxplot = [ fields for fields in fields_include]
+            data   = df_outliers[fields_boxplot].values
+            labels = df_outliers[fields_boxplot].columns.tolist()
+            
+            fig1, ax1 = plt.subplots(figsize=(15,15))
+            ax1.set_title(name_file)
+            ax1.set_xlabel('Fields DataSet')
+            ax1.set_ylabel('Cantidad')
+            ax1.boxplot(data,labels=labels)       
+
+            plt.savefig(input_dir+ "/outliers-values/boxplot_"+name_file+".jpeg", bbox_inches='tight')
+            plt.close('all')
+
+        else:
+            if alg_outliers == 'z_score_method_mean':
+                df_final = z_score_method_mean(df_outliers,q1,q3,fields_include,input_dir)
+            # Update columns remove outliers in the Origin DataSet
+            df_origin.update(df_final)
+            df_origin.to_csv(path,encoding='utf-8')
        
     mlflow.log_artifacts(input_dir+ "/outliers-values")
     

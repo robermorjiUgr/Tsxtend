@@ -5,6 +5,7 @@ import math
 import click 
 import json
 import yaml
+import logging
 
 #DATASCIENCE
 import numpy as np
@@ -13,12 +14,15 @@ import pandas as pd
 #MLFLOW
 import  mlflow
 
+
 #OWN
 import Collection.collection  as collect
 
 #SCIPY
 import scipy.stats
 from scipy.sparse.linalg import expm
+from scipy.cluster import hierarchy as hc
+
 
 #SKLEARN
 from sklearn.decomposition import PCA
@@ -28,9 +32,9 @@ from sklearn.neighbors import kneighbors_graph
 
 
 import seaborn as sns
-import matplotlib.pyplot as plt
-import lightgbm as lgb
-
+from matplotlib import pyplot as plt
+import plotly.figure_factory as ff
+import plotly.io as pio
 
 @click.command(help="Dado un fichero CSV, transformar en un artefacto mlflow")
 @click.option("--n_rows", type=float, default=0, help="número de filas a extraer, 0 extrae todo")
@@ -74,15 +78,28 @@ def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
 
         
         # Algorithms Feature Selections
-        if alg_fs == 'correlation':
-            plt = correlation(df_origin)
-            # Image .png correlations
-            plt.savefig(input_dir+ "/feature-selection/"+alg_fs+"/"+csv.replace(".csv",'')+".png")
+        if alg_fs == 'visualization':
+            if not os.path.exists(input_dir+ "/feature-selection/"+alg_fs+"/dendograma/"):
+                os.makedirs(input_dir+ "/feature-selection/"+alg_fs+"/dendograma/")    
+            if not os.path.exists(input_dir+ "/feature-selection/"+alg_fs+"/heatmap/"):
+                os.makedirs(input_dir+ "/feature-selection/"+alg_fs+"/heatmap/")  
+            
+            if fields_include!='None':
+                l_measure = [ field for field  in fields_include ]
+                
+                heatmap = correlation(df_origin[l_measure])           
+                heatmap.savefig(input_dir+ "/feature-selection/"+alg_fs+"/heatmap/"+csv.replace(".csv",'')+".png")
+            else:
+                heatmap = correlation(df_origin)           
+                plt.savefig(input_dir+ "/feature-selection/"+alg_fs+"/heatmap/"+csv.replace(".csv",'')+".png")
         else:
             if alg_fs == 'FSMeasures':
                 feature_data = FSMeasures(df_origin)
+                name_file = csv.replace(".csv","")
                 # Create to_html()
                 feature_data.to_html(input_dir+ "/feature-selection/"+alg_fs+"/"+csv.replace(".csv",".html")) 
+                #Insert logs values in folder logs
+                logs(feature_data,input_dir,name_file)
         
         # Create Artifacts mlflows
         mlflow.log_artifacts(input_dir+ "/feature-selection")
@@ -110,7 +127,7 @@ def correlation(data):
     
 def FSMeasures(data):
     """Calculates entropy of the passed `pd.Series`
-        """
+    """
     stats = pd.DataFrame()
     
     stats["mean"] = data.mean()
@@ -126,6 +143,32 @@ def FSMeasures(data):
     print (stats)
     return stats
 
+def logs (df,path,filename):
+    # import ipdb; ipdb.set_trace()
+    print(filename)
+    LOG_FILENAME =  path + "/feature-selection/logs/"+filename+".logs"
+    
+    if not os.path.exists(path+ "/feature-selection/logs/"):
+        os.makedirs(path+ "/feature-selection/logs/")
+
+    # Set up a specific logger with our desired output level
+    my_logger = logging.getLogger('MyLogger')
+    my_logger.setLevel(logging.INFO)
+
+    # Add the log message handler to the logger
+    handler = logging.handlers.RotatingFileHandler(
+        LOG_FILENAME
+    )
+    my_logger.addHandler(handler)
+    # logging.basicConfig(filename=log_file, level=logging.INFO)
+    my_logger.info("\n\nMedia ----       \n" + str(df['mean'])       )    
+    my_logger.info("\n\nDesviación ----  \n" + str(df['Std.Dev'])    )
+    my_logger.info("\n\nVarianza ----    \n" + str(df['Var'])        )
+    my_logger.info("\n\nEntropia ----    \n" + str(df['entropy'])    )
+    my_logger.info("\n\nChiCuadrado ---- \n" + str(df['chi'])        )
+    my_logger.info("\n\nDispersion ----  \n" + str(df['dispersion']) )
+
+    
     
 def entropy(data):
     """

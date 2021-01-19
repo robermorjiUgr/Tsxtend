@@ -1,3 +1,3 @@
 fields_include: None
-input_dir: Data/ASHRAE
-alg_missing: interpolate
+input_dir: Data/DUTCH-ENERGY/endinetGAS
+alg_missing: visualization

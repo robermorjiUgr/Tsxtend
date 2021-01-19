@@ -1,5 +1,5 @@
-fields_include: N_urgent,urgent,OrderA,OrderB,OrderC,FSector,TrafficOrder,B1,B2,B3,TOrders
+fields_include: num_connections,delivery_perc,perc_of_active_connections,type_conn_perc,annual_consume,annual_consume_lowtarif_perc,smartmeter_perc
 q1: 0.25
 q3: 0.75
-alg_outliers: z_score_method_mean
-input_dir: Data/DAILY_FORECASTING
+alg_outliers: visualization
+input_dir:  Data/DUTCH-ENERGY/endinetGAS
