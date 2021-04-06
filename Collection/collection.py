@@ -29,29 +29,24 @@ class Collections:
     def __init__(self):
         self.dataFrame = pd.DataFrame()
 
-    def getDataFrame():
+    def getDataFrame(self):
         return self.dataFrame
     
     def setDataFrame(self, dataFrame):
         self.dataFrame = dataFrame
     
-    # def readCsv( self, path ):
-    #     fields = ['building_id', 'meter', 'meter_reading', 'timestamp', 'site_id', 'air_temperature', 'cloud_coverage',
-    #               'dew_temperature', 'precip_depth_1_hr', 'sea_level_pressure', 'wind_direction', 'wind_speed']
-    #     self.dataFrame = pd.read_csv(path, skipinitialspace=True, usecols=fields)
-    #     return self.dataFrame
-    
+   
     @staticmethod
     def readCSV (path, n_rows, fields=None):
-        # import ipdb; ipdb.set_trace()
+       
         if n_rows!=0:
             if not fields:
                 dataFrame = pd.read_csv(path, skipinitialspace=True, nrows=n_rows,index_col=0)
             else:
-                dataFrame = pd.read_csv(path, skipinitialspace=True, usecols=fields,nrows=n_rows,index=index)
+                dataFrame = pd.read_csv(path, skipinitialspace=True, usecols=fields,nrows=n_rows)
         else:
             if not fields:
-                dataFrame = pd.read_csv(path, skipinitialspace=True,index_col=0)
+                dataFrame = pd.read_csv(path, skipinitialspace=True)
             else:
                 dataFrame = pd.read_csv(path, skipinitialspace=True, usecols=fields)
        

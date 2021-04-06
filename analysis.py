@@ -124,7 +124,7 @@ def Analysis(n_rows,fields, input_dir,elements):
             # DRAW PLOT
             fig1, ax1 = plt.subplots(figsize=(15,15))
             ax1.set_title(name_file + " - " + field)
-            ax1.set_xlabel('Fields DataSet')
+            ax1.set_xlabel(field)
             ax1.set_ylabel('Cantidad')
             print("Draw graph bar column = " + field )
             ax1.bar(data1,data2, width)           

@@ -40,7 +40,6 @@ fields_include,group_by_parent, output_dir):
     if not os.path.exists(output_dir+ "/partition-data"):
         os.makedirs(output_dir+ "/partition-data")  
 
-      
     if fields_include!='None':
         fields_include = fields_include.split(",")
         df_origin = load_data(path_data, int(n_rows), fields_include)
@@ -232,8 +231,7 @@ def _format_str_query(query,group_by_parent):
     return _query_format
 
 
-def load_data( path, n_rows, fields=None):
-       
+def load_data( path, n_rows, fields=None):       
     dataframe = collect.Collections.readCSV(path,n_rows,fields)
     return dataframe
 
