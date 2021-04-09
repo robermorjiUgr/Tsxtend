@@ -63,6 +63,7 @@ def Analysis(n_rows,fields, input_dir,elements):
 
         print("Create summary html")
         df_analysis = pd.DataFrame(columns=['Mean','Median','Std','Q1','Q2','Q3','Min','Max'])
+        #import ipdb; ipdb.set_trace()
         df_analysis['Mean']   = df_origin.mean(axis=0)
         df_analysis['Median'] = df_origin.median(axis=0)
         df_analysis['Std']    = df_origin.std(axis=0)

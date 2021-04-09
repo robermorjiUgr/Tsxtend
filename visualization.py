@@ -57,7 +57,7 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
         
         path = input_dir       
         path += "/"+csv
-        import ipdb; ipdb.set_trace()
+        #import ipdb; ipdb.set_trace()
         df_origin = load_data(path,n_rows)
         
             
@@ -117,12 +117,12 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
                 
                 msno.bar(df[l_measure])               
                 plt.savefig(input_dir+ "/visualization/bar/"+csv.replace(".csv",'')+".png")
-                
-                # msno.dendrogram(df[l_measure])               
-                # plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
-                
-                # msno.heatmap(df[l_measure])              
-                # plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
+
+                msno.dendrogram(df[l_measure])               
+                plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
+
+                msno.heatmap(df[l_measure])              
+                plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
             else:
                 msno.matrix(df)
                 plt.savefig(input_dir+ "/visualization/matrix/"+csv.replace(".csv",'')+".png")
@@ -130,11 +130,11 @@ def Visualization(n_rows,field_x, field_y, graph, measures, _resample, input_dir
                 msno.bar(df)
                 plt.savefig(input_dir+ "/visualization/bar/"+csv.replace(".csv",'')+".png")
                 
-                # msno.dendrogram(df)
-                # plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
+                msno.dendrogram(df)
+                plt.savefig(input_dir+ "/visualization/dendograma/"+csv.replace(".csv",'')+".png")
 
-                # msno.heatmap(df)
-                # plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
+                msno.heatmap(df)
+                plt.savefig(input_dir+ "/visualization/heatmap/"+csv.replace(".csv",'')+".png")
        
         plt.close('all')
 
