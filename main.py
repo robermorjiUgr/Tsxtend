@@ -146,7 +146,7 @@ def workflow():
                     
                 }
                 
-                anlysis = _get_or_run("analysis_data",parameters)
+                analysis = _get_or_run("analysis_data",parameters)
             '''
             Visualization:
                 Algorithm is divide in two parts:
