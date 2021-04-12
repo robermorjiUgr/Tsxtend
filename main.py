@@ -199,6 +199,7 @@ def workflow():
                     "fields_include":   parsed_yaml_file['fields_include'],
                     "group_by_parent":  parsed_yaml_file['group_by_parent'],
                     "output_dir":       parsed_yaml_file['output_dir'],
+                    "type_dataset":     parsed_yaml_file['type_dataset'],
                 }
 
                 partition = _get_or_run("partitionDF",parameters)
@@ -463,6 +464,7 @@ def workflow():
                         Algorithms LSTM. 
                     '''
                     if item=="lstm":
+                        
                         a_yaml_file = open("Config/lstm.yaml")
                         parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
                         print(parsed_yaml_file)
@@ -488,7 +490,7 @@ def workflow():
                         Algorithms MLP. 
                     '''
                     if item=="mlp":
-                        # import ipdb; ipdb.set_trace()
+                        
                         a_yaml_file = open("Config/mlp.yaml")
                         parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
                         print(parsed_yaml_file)

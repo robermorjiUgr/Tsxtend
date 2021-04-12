@@ -34,10 +34,11 @@ entry_points:
         fields_include: {type:str, default=None}
         group_by_parent: {type:str, default=None}
         output_dir: {type:str, default="output/"}
+        type_dataset: {type:str, default=""}
 
     command: "python3 partitionDF.py  --date_init {date_init} --date_end {date_end} --path_data {path_data}
     --n_rows {n_rows} --fields_include {fields_include} --group_by_parent {group_by_parent}  
-    --output_dir {output_dir}"
+    --output_dir {output_dir} --type_dataset {type_dataset}"
 
   missing_values:
     parameters: 

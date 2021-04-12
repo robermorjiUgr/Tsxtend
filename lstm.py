@@ -22,6 +22,7 @@ from mlflow.types.schema import Schema, ColSpec
 import Collection.collection  as collect
 
 #KERAS
+import keras
 from keras.datasets import imdb
 from keras.preprocessing import sequence
 from keras import layers
@@ -31,6 +32,7 @@ from keras.optimizers import RMSprop
 from keras.layers.merge import concatenate
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
+from keras.losses import Huber
 
 
 #SKLEARN
@@ -61,7 +63,7 @@ def eval_metrics(actual, pred):
 def lstm(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input,model_output,n_rows,
 n_steps,epochs,hidden_units,batch_size,verbose):
     
-
+    
     if not os.path.exists(input_dir+ "/lstm"):
         os.makedirs(input_dir+ "/lstm")
     
@@ -86,7 +88,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     df = scaler.fit_transform(df) 
     
     # Split  train, validate and test
-    train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )        
+    train,  validate, test = np.split(df,[ int( .8*len(df) ), int( .95 * len(df)) ] )        
     
     # Preparation data sequences TRAIN
     X,y = preparation_data(train, n_steps, model_input)
@@ -100,10 +102,16 @@ n_steps,epochs,hidden_units,batch_size,verbose):
         
     
     # MODEL
+    # opt = keras.optimizers.RMSprop()
+    opt = keras.optimizers.SGD(lr=1e-5, momentum=0.9)
     model = Sequential()
-    model.add(LSTM(hidden_units,input_shape=(X.shape[1], X.shape[2])))
+    model.add(Conv1D(filters=hidden_units, kernel_size=5,strides=1,padding="causal",
+    activation='relu',input_shape=(X.shape[1], X.shape[2])))
+    model.add(LSTM(hidden_units,return_sequences=True))
+    model.add(LSTM(hidden_units,return_sequences=True))
+    model.add(LSTM(hidden_units))
     model.add(Dense(1))
-    model.compile(loss='mae', optimizer='adam' )
+    model.compile(loss=keras.losses.Huber(), optimizer=opt,metrics=['mae','mse'])
     history = model.fit(
                 X, y,
                 epochs=epochs, 
@@ -113,8 +121,8 @@ n_steps,epochs,hidden_units,batch_size,verbose):
   
     # PREDICT TRAIN
     test_predict = model.predict(test_X,verbose=0)
-    (rmse, mae,r2) = eval_metrics(test_y, test_predict)
-    
+    (rmse, mae, mse, r2) = eval_metrics(test_y, test_predict)
+    print(rmse, mae, mse, r2)
     
     name_model = "model_lstm_"+file_analysis.replace(".csv","")
     
@@ -137,10 +145,12 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     #import ipdb; ipdb.set_trace()
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
-    plt.title('model loss')
+    plt.plot(history.history['mae'])
+    plt.plot(history.history['val_mae'])
+    plt.title('MAE and Loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.legend(['train loss', 'validate loss'], loc='upper left')
+    plt.legend(['train loss', 'validate loss','mae','val_mae'], loc='upper left')
     plt.savefig(input_dir+"/lstm/"+file_analysis.replace(".csv","") + ".png")
 
     mlflow.log_artifact(input_dir+"/lstm/"+file_analysis.replace(".csv","")+".png")
@@ -187,9 +197,10 @@ def preparation_data(data, n_steps, model_input):
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
+    mse = mean_squared_error(actual, pred)
     mae = mean_absolute_error(actual, pred)
     r2 = r2_score(actual, pred)
-    return rmse, mae, r2
+    return rmse, mae, mse, r2
 
    
 if __name__ == '__main__':

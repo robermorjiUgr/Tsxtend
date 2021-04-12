@@ -27,18 +27,19 @@ import Collection.collection  as collect
 @click.option("--fields_include", type=str, default=None, help="Incluir los siguientes campos")
 @click.option("--group_by_parent", type=str, help="filtrar por un campo de las columnas")
 @click.option("--output_dir", type=str,default="output/")
+@click.option("--type_dataset", type=str,default="")
 
 def PartitionDF(date_init, date_end, path_data, n_rows, 
-fields_include,group_by_parent, output_dir):
-    # import ipdb; ipdb.set_trace()
+fields_include,group_by_parent, output_dir,type_dataset):
+    
     mlflow.set_tag("mlflow.runName", "Data Partition")
     if date_init != 'None' or date_end != 'None':
         date_init = pd.to_datetime(date_init,format="%Y-%m-%d %H:%M:%S")
         date_end  = pd.to_datetime(date_end,format="%Y-%m-%d %H:%M:%S")
     
     
-    if not os.path.exists(output_dir+ "/partition-data"):
-        os.makedirs(output_dir+ "/partition-data")  
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)  
 
     if fields_include!='None':
         fields_include = fields_include.split(",")
@@ -82,7 +83,10 @@ fields_include,group_by_parent, output_dir):
                 df_final = df_origin.query(q_child)
                 list_name_csv = _format_name_csv(q_child)
                 
-                name_csv = "/train"
+                if type_dataset=="train":
+                    name_csv = "/train"
+                else:
+                    name_csv = "/test"
                 # Name CSV
                 for element in list_name_csv:
                     name_csv += "_"+element[0]+"_"+element[1].replace('/',"").replace("'","")
@@ -95,14 +99,19 @@ fields_include,group_by_parent, output_dir):
                 else:
                     print("Not creation trainning partitions: " + name_csv + " DataFrame have not values")
     else:
-        name_csv = "/train.csv"
+        if type_dataset=="train":
+            name_csv = "/train"
+        else:
+            name_csv = "/test"
+
+        import ipdb; ipdb.set_trace()
         print("Creation trainning partitions: " + name_csv)
         create_csv(df_origin, output_dir, name_csv,index=True)
        
 
     # MLFLOW artifact   
-    mlflow.log_artifacts(output_dir+ "/partition-data")
     mlflow.log_artifacts(output_dir)
+    
 
 
 # Class tree. 
