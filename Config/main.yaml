@@ -1,7 +1,9 @@
-etl:      feature-selection
+etl:      partition-data
 deepl:    ""
 mlearn:   ""
 n_rows:   0.0
 elements: ""
-input_dir: Data/DUTCH-ENERGY/endinetGAS
-output_dir: Data/DUTCH-ENERGY/endinetGAS
+input_dir: Data/ASHRAE/ashrae/results/
+output_dir: Data/ASHRAE/ashrae/results/
+input_dir_train: Data/ASHRAE/ashrae/results/train/
+input_dir_test: Data/ASHRAE/ashrae/results/test/
