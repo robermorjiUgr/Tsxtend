@@ -414,9 +414,15 @@ def workflow():
                     #     f.close()
 
         if deepl:
+            import ipdb; ipdb.set_trace();
             # Lists of Files for analise
-            list_file = os.listdir(main_yaml_file['input_dir'])
-            list_file = [ l for l in list_file if l.endswith(".csv")]
+            # list_file = os.listdir(main_yaml_file['input_dir'])
+            # list_file = [ l for l in list_file if l.endswith(".csv")]
+            list_file_train = os.listdir(main_yaml_file['input_dir_train'])
+            list_file_test  = os.listdir(main_yaml_file['input_dir_test'])
+            
+            list_file_train = [ l for l in list_file_train if l.endswith(".csv") ]
+            list_file_test  =  [ l for l in list_file_test if l.endswith(".csv") ]
             
             # Selected particular elements for analise
             # import ipdb; ipdb.set_trace()
@@ -424,118 +430,124 @@ def workflow():
             #     elements = [ elem for elem in elements.split(",") ]
             #     list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
             
-            for csv in list_file:
+            for csv in list_file_train:
                 # Create  machine learning algorithms list.
                 # Possibility to launch several machine learning algorithms at once through the main.yaml configuration file.
-                deepl_ = deepl.split(",")
-                for item in deepl_:
-                    '''
-                    CNN:
-                        Algorithms CNN. 
-                    '''
-                    if item=="cnn":
-                        a_yaml_file = open("Config/cnn.yaml")
-                        parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                        print(parsed_yaml_file)
-                        parameters = {
-                            "file_analysis":    csv,
-                            "artifact_uri":     active_run.info.artifact_uri,
-                            "experiment_id":    active_run.info.experiment_id,
-                            "run_id":           active_run.info.run_id,
-                            "elements":         elements,
-                            "n_rows":           n_rows,
-                            "input_dir":        parsed_yaml_file['input_dir'],
-                            "model_input":      parsed_yaml_file['model_input'], 
-                            "model_output":     parsed_yaml_file['model_output'], 
-                            "n_steps":          parsed_yaml_file['n_steps'],
-                            "n_features":       parsed_yaml_file['n_features'],
-                            "conv_filters":     parsed_yaml_file['conv_filters'],
-                            "conv_kernel_size": parsed_yaml_file['conv_kernel_size'],
-                            "pool_size":        parsed_yaml_file['pool_size'],
-                            "hidden_units":     parsed_yaml_file['hidden_units'],
-                            "epochs":           parsed_yaml_file['epochs'],
-                            "batch_size":       parsed_yaml_file['batch_size'],
-                            "verbose":          parsed_yaml_file['verbose'],
-                        } 
-                        
-                        cnn = _get_or_run("cnn", parameters=parameters)  
-                    '''
-                    LSTM:
-                        Algorithms LSTM. 
-                    '''
-                    if item=="lstm":
-                        
-                        a_yaml_file = open("Config/lstm.yaml")
-                        parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                        print(parsed_yaml_file)
-                        parameters = {
-                            "file_analysis":    csv,
-                            "artifact_uri":     active_run.info.artifact_uri,
-                            "experiment_id":    active_run.info.experiment_id,
-                            "run_id":           active_run.info.run_id,
-                            "n_rows":           n_rows,
-                            "input_dir":        parsed_yaml_file['input_dir'],
-                            "model_input":      parsed_yaml_file['model_input'], 
-                            "model_output":     parsed_yaml_file['model_output'], 
-                            "n_steps":          parsed_yaml_file['n_steps'],
-                            "hidden_units":     parsed_yaml_file['hidden_units'],
-                            "epochs":           parsed_yaml_file['epochs'],
-                            "batch_size":       parsed_yaml_file['batch_size'],
-                            "verbose":          parsed_yaml_file['verbose'],
-                        } 
-                        
-                        lstm = _get_or_run("lstm", parameters=parameters)  
-                    '''
-                    MLP:
-                        Algorithms MLP. 
-                    '''
-                    if item=="mlp":
-                        
-                        a_yaml_file = open("Config/mlp.yaml")
-                        parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                        print(parsed_yaml_file)
-                        parameters = {
-                            "file_analysis":    csv,
-                            "artifact_uri":     active_run.info.artifact_uri,
-                            "experiment_id":    active_run.info.experiment_id,
-                            "run_id":           active_run.info.run_id,
-                            "n_rows":           n_rows,
-                            "input_dir":        parsed_yaml_file['input_dir'],
-                            "model_input":      parsed_yaml_file['model_input'], 
-                            "model_output":     parsed_yaml_file['model_output'], 
-                            "n_steps":          parsed_yaml_file['n_steps'],
-                            "hidden_units":     parsed_yaml_file['hidden_units'],
-                            "epochs":           parsed_yaml_file['epochs'],
-                            "batch_size":       parsed_yaml_file['batch_size'],
-                            "verbose":          parsed_yaml_file['verbose'],
-                        } 
-                        
-                        mlp = _get_or_run("mlp", parameters=parameters)  
-                    '''
-                    MLP_HEADED:
-                        Algorithms MLP_HEADED. 
-                    '''
-                    if item=="mlp_headed":
-                        a_yaml_file = open("Config/mlp_headed.yaml")
-                        parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                        print(parsed_yaml_file)
-                        parameters = {
-                            "file_analysis":    csv,
-                            "artifact_uri":     active_run.info.artifact_uri,
-                            "experiment_id":    active_run.info.experiment_id,
-                            "run_id":           active_run.info.run_id,
-                            "n_rows":           n_rows,
-                            "input_dir":        parsed_yaml_file['input_dir'],
-                            "model_input":      parsed_yaml_file['model_input'], 
-                            "model_output":     parsed_yaml_file['model_output'], 
-                            "n_steps":          parsed_yaml_file['n_steps'],
-                            "hidden_units":     parsed_yaml_file['hidden_units'],
-                            "epochs":           parsed_yaml_file['epochs'],
-                            "batch_size":       parsed_yaml_file['batch_size'],
-                            "verbose":          parsed_yaml_file['verbose'],
-                        } 
-                        
-                        mlp_headed = _get_or_run("mlp_headed", parameters=parameters)  
+                file_analysis_test = csv.replace("train_","test_")
+                if file_analysis_test in list_file_test:
+                    import ipdb; ipdb.set_trace();
+                    csv_test = file_analysis_test
+                    deepl_ = deepl.split(",")
+                    for item in deepl_:
+                        '''
+                        CNN:
+                            Algorithms CNN. 
+                        '''
+                        if item=="cnn":
+                            a_yaml_file = open("Config/cnn.yaml")
+                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                            print(parsed_yaml_file)
+                            parameters = {
+                                "file_anlysis":         csv,
+                                "artifact_uri":         active_run.info.artifact_uri,
+                                "experiment_id":        active_run.info.experiment_id,
+                                "run_id":               active_run.info.run_id,
+                                "elements":             elements,
+                                "n_rows":               n_rows,
+                                "input_dir":            parsed_yaml_file['input_dir'],
+                                "model_input":          parsed_yaml_file['model_input'], 
+                                "model_output":         parsed_yaml_file['model_output'], 
+                                "n_steps":              parsed_yaml_file['n_steps'],
+                                "n_features":           parsed_yaml_file['n_features'],
+                                "conv_filters":         parsed_yaml_file['conv_filters'],
+                                "conv_kernel_size":     parsed_yaml_file['conv_kernel_size'],
+                                "pool_size":            parsed_yaml_file['pool_size'],
+                                "hidden_units":         parsed_yaml_file['hidden_units'],
+                                "epochs":               parsed_yaml_file['epochs'],
+                                "batch_size":           parsed_yaml_file['batch_size'],
+                                "verbose":              parsed_yaml_file['verbose'],
+                            } 
+                            
+                            cnn = _get_or_run("cnn", parameters=parameters)  
+                        '''
+                        LSTM:
+                            Algorithms LSTM. 
+                        '''
+                        if item=="lstm":
+                            
+                            a_yaml_file = open("Config/lstm.yaml")
+                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                            print(parsed_yaml_file)
+                            parameters = {
+                                "file_analysis_train":  csv,
+                                "file_analysis_test":   csv_test,
+                                "artifact_uri":     active_run.info.artifact_uri,
+                                "experiment_id":    active_run.info.experiment_id,
+                                "run_id":           active_run.info.run_id,
+                                "n_rows":           n_rows,
+                                "input_dir_train":  parsed_yaml_file['input_dir_train'],
+                                "input_dir_test":   parsed_yaml_file['input_dir_test'],
+                                "model_input":      parsed_yaml_file['model_input'], 
+                                "model_output":     parsed_yaml_file['model_output'], 
+                                "n_steps":          parsed_yaml_file['n_steps'],
+                                "hidden_units":     parsed_yaml_file['hidden_units'],
+                                "epochs":           parsed_yaml_file['epochs'],
+                                "batch_size":       parsed_yaml_file['batch_size'],
+                                "verbose":          parsed_yaml_file['verbose'],
+                            } 
+                            
+                            lstm = _get_or_run("lstm", parameters=parameters)  
+                        '''
+                        MLP:
+                            Algorithms MLP. 
+                        '''
+                        if item=="mlp":
+                            
+                            a_yaml_file = open("Config/mlp.yaml")
+                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                            print(parsed_yaml_file)
+                            parameters = {
+                                "file_analysis":    csv,
+                                "artifact_uri":     active_run.info.artifact_uri,
+                                "experiment_id":    active_run.info.experiment_id,
+                                "run_id":           active_run.info.run_id,
+                                "n_rows":           n_rows,
+                                "input_dir":        parsed_yaml_file['input_dir'],
+                                "model_input":      parsed_yaml_file['model_input'], 
+                                "model_output":     parsed_yaml_file['model_output'], 
+                                "n_steps":          parsed_yaml_file['n_steps'],
+                                "hidden_units":     parsed_yaml_file['hidden_units'],
+                                "epochs":           parsed_yaml_file['epochs'],
+                                "batch_size":       parsed_yaml_file['batch_size'],
+                                "verbose":          parsed_yaml_file['verbose'],
+                            } 
+                            
+                            mlp = _get_or_run("mlp", parameters=parameters)  
+                        '''
+                        MLP_HEADED:
+                            Algorithms MLP_HEADED. 
+                        '''
+                        if item=="mlp_headed":
+                            a_yaml_file = open("Config/mlp_headed.yaml")
+                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                            print(parsed_yaml_file)
+                            parameters = {
+                                "file_analysis":    csv,
+                                "artifact_uri":     active_run.info.artifact_uri,
+                                "experiment_id":    active_run.info.experiment_id,
+                                "run_id":           active_run.info.run_id,
+                                "n_rows":           n_rows,
+                                "input_dir":        parsed_yaml_file['input_dir'],
+                                "model_input":      parsed_yaml_file['model_input'], 
+                                "model_output":     parsed_yaml_file['model_output'], 
+                                "n_steps":          parsed_yaml_file['n_steps'],
+                                "hidden_units":     parsed_yaml_file['hidden_units'],
+                                "epochs":           parsed_yaml_file['epochs'],
+                                "batch_size":       parsed_yaml_file['batch_size'],
+                                "verbose":          parsed_yaml_file['verbose'],
+                            } 
+                            mlp_headed = _get_or_run("mlp_headed", parameters=parameters)  
+                
                     
                     # if not os.path.exists(str(output_dir)+"/"+item+"/parameters/"):
                     #     os.makedirs(str(output_dir)+"/"+item+"/parameters/")

@@ -46,11 +46,13 @@ def eval_metrics(actual, pred):
     return rmse, mae, r2
 
 @click.command(help="Dado un fichero CSV, transformar en un artefacto mlflow")
-@click.option("--file_analysis", type=str,default=None)
+@click.option("--file_analysis_train", type=str,default=None)
+@click.option("--file_analysis_test", type=str,default=None)
 @click.option("--artifact_uri", type=str,default=None)
 @click.option("--experiment_id", type=str,default=None)
 @click.option("--run_id", type=str,default=None)
-@click.option("--input_dir", type=str,default=None)
+@click.option("--input_dir_train", type=str,default=None)
+@click.option("--input_dir_test", type=str,default=None)
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
@@ -60,22 +62,22 @@ def eval_metrics(actual, pred):
 @click.option("--batch_size", type=int, default=72, help="Batch Size")
 @click.option("--verbose", type=int, default=1, help="Verbose")
 
-def lstm(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input,model_output,n_rows,
+def lstm(file_analysis_train,file_analysis_test, artifact_uri,experiment_id, run_id, input_dir_train,input_dir_test, model_input,model_output,n_rows,
 n_steps,epochs,hidden_units,batch_size,verbose):
     
     
-    if not os.path.exists(input_dir+ "/lstm"):
-        os.makedirs(input_dir+ "/lstm")
+    if not os.path.exists(input_dir_train+ "/lstm"):
+        os.makedirs(input_dir_train+ "/lstm")
     
     # for file_analysis in list_file:
-    print(str(file_analysis))
-    mlflow.set_tag("mlflow.runName", "LSTM -  " + str(file_analysis.replace(".csv","").replace("train_","")))
+    print(str(file_analysis_train))
+    mlflow.set_tag("mlflow.runName", "LSTM -  " + str(file_analysis_train.replace(".csv","").replace("train_","")))
    
-    path = input_dir+ "/"+file_analysis
+    path = input_dir_train+ "/"+file_analysis_train
    
     df_origin = load_data(path,n_rows)
     
-    print("LSTM: " + str(file_analysis))
+    print("LSTM: " + str(file_analysis_train))
 
     if model_input:
         model_input = model_input.split(",")
@@ -88,8 +90,8 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     df = scaler.fit_transform(df) 
     
     # Split  train, validate and test
-    train,  validate, test = np.split(df,[ int( .8*len(df) ), int( .95 * len(df)) ] )        
-    
+    # train,  validate, test = np.split(df,[ int( .8*len(df) ), int( .95 * len(df)) ] )        
+    train,validate = np.split(df,[ int( .9*len(df) ) ])
     # Preparation data sequences TRAIN
     X,y = preparation_data(train, n_steps, model_input)
         
@@ -97,6 +99,20 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     validate_X,validate_y = preparation_data(validate, n_steps, model_input)
     
     # Preparation data sequences TEST
+    path = input_dir_test+ "/"+file_analysis_test
+    df_origin = load_data(path,n_rows)
+
+    print("LSTM Test: " + str(file_analysis_test))
+    import ipdb; ipdb.set_trace()
+    if model_input:
+        df = df_origin.filter(  model_input , axis=1)
+    else:
+        df = df_origin
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df = scaler.fit_transform(df) 
+    
+    test = df
     test_X,test_y = preparation_data(test, n_steps, model_input)
     
         
@@ -124,7 +140,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     (rmse, mae, mse, r2) = eval_metrics(test_y, test_predict)
     print(rmse, mae, mse, r2)
     
-    name_model = "model_lstm_"+file_analysis.replace(".csv","")
+    name_model = "model_lstm_"+file_analysis_train.replace(".csv","")
     
     # SCHEMA MODEL MLFlow  
     
