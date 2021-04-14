@@ -156,22 +156,26 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     # SAVE SCHEMA MODEL
     signature = ModelSignature(inputs=input_schema, outputs=output_schema)
     # LOG MODEL ARTIFACTS
-    mlflow.keras.log_model(keras_model=model,signature=signature,artifact_path=input_dir+"/lstm")
+    mlflow.keras.log_model(keras_model=model,signature=signature,artifact_path=input_dir_train+"/lstm")
 
     #import ipdb; ipdb.set_trace()
+    plt.title(csv)
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.plot(history.history['mae'])
     plt.plot(history.history['val_mae'])
+    plt.plot(history.history['mse'])
+    plt.plot(history.history['val_mse'])
     plt.title('MAE and Loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train loss', 'validate loss','mae','val_mae'], loc='upper left')
-    plt.savefig(input_dir+"/lstm/"+file_analysis.replace(".csv","") + ".png")
+    plt.savefig(input_dir_train+"/lstm/"+file_analysis_train.replace(".csv","") + ".png")
 
-    mlflow.log_artifact(input_dir+"/lstm/"+file_analysis.replace(".csv","")+".png")
+    mlflow.log_artifact(input_dir+"/lstm/"+file_analysis_train.replace(".csv","")+".png")
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("mae", mae)
+    mlflow.log_metric("mse", mse4)
     mlflow.log_metric("r2",r2)
 
         

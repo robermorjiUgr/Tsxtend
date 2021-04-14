@@ -4,6 +4,6 @@ input_dir_train:            Data/ASHRAE/ashrae/results/train/
 input_dir_test:             Data/ASHRAE/ashrae/results/test/
 n_steps:                    2
 hidden_units:               16
-epochs:                     10
+epochs:                     1
 batch_size:                 16
 verbose:                    1
