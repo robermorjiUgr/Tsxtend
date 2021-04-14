@@ -172,7 +172,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     plt.legend(['train loss', 'validate loss','mae','val_mae'], loc='upper left')
     plt.savefig(input_dir_train+"/lstm/"+file_analysis_train.replace(".csv","") + ".png")
 
-    mlflow.log_artifact(input_dir+"/lstm/"+file_analysis_train.replace(".csv","")+".png")
+    mlflow.log_artifact(input_dir_train+"/lstm/"+file_analysis_train.replace(".csv","")+".png")
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("mae", mae)
     mlflow.log_metric("mse", mse4)
