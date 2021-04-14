@@ -175,7 +175,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     mlflow.log_artifact(input_dir_train+"/lstm/"+file_analysis_train.replace(".csv","")+".png")
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("mae", mae)
-    mlflow.log_metric("mse", mse4)
+    mlflow.log_metric("mse", mse)
     mlflow.log_metric("r2",r2)
 
         
