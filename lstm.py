@@ -159,7 +159,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     mlflow.keras.log_model(keras_model=model,signature=signature,artifact_path=input_dir_train+"/lstm")
 
     #import ipdb; ipdb.set_trace()
-    plt.title(csv)
+    plt.title(file_analysis_train)
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.plot(history.history['mae'])
