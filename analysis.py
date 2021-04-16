@@ -114,28 +114,6 @@ def Analysis(n_rows,fields, input_dir,elements):
             plt.savefig(input_dir+ "/analysis/data/graph-line/"+name_file+"/"+field+".jpeg")
             plt.close('all')
         
-        ### CREATE BARPLOT
-        print("Create bar plot")
-        for field in fields_boxplot:
-            
-            width = 0.30  # the width of the bars
-            data1  = df_origin.index.values.tolist()
-            data2 = df_origin[field].values.tolist()
-            
-            # DRAW PLOT
-            fig1, ax1 = plt.subplots(figsize=(15,15))
-            ax1.set_title(name_file + " - " + field)
-            ax1.set_xlabel(field)
-            ax1.set_ylabel('Cantidad')
-            print("Draw graph bar column = " + field )
-            ax1.bar(data1,data2, width)           
-
-            if not os.path.exists(input_dir+ "/analysis/data/barplot/"+name_file):
-                os.makedirs(input_dir+ "/analysis/data/barplot/"+name_file)
-
-            plt.savefig(input_dir+ "/analysis/data/barplot/"+name_file+"/"+field+".jpeg")
-            plt.close('all')
-
         # import ipdb; ipdb.set_trace()
         mlflow.log_artifacts(input_dir+ "/analysis")
     

@@ -1,5 +1,5 @@
-fields_include: num_connections,delivery_perc,perc_of_active_connections,type_conn_perc,annual_consume,annual_consume_lowtarif_perc,smartmeter_perc
+fields_include: air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_direction,wind_speed
 q1: 0.25
 q3: 0.75
-alg_outliers: visualization
-input_dir:  Data/DUTCH-ENERGY/endinetGAS
+alg_outliers: z_score_method_mean
+input_dir:  Data/ASHRAE/ashrae/results/train/

@@ -103,7 +103,7 @@ n_steps,epochs,hidden_units,batch_size,verbose):
     df_origin = load_data(path,n_rows)
 
     print("LSTM Test: " + str(file_analysis_test))
-    import ipdb; ipdb.set_trace()
+    
     if model_input:
         df = df_origin.filter(  model_input , axis=1)
     else:

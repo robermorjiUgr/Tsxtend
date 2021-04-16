@@ -24,13 +24,9 @@ import Collection.collection  as collect
 
 from impyute.imputation.cs import fast_knn, mice
 """
-* Imputation Using ( Mean/Median) Values
-* Imputation Using ( Most Frequent ) or  ( Zero/Constant ) Values
-* Imputation Using k-NN
-* Imputation Using Multivariate Imputation by Chained Equation (MICE)
-* Stochastic regression imputation
-* Extrapolation and Interpolation
-* Hot-Deck imputation
+ - Interpolate
+ - Drop rows
+
 """
 
 """

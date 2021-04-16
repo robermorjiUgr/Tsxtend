@@ -69,15 +69,14 @@ entry_points:
 
   xgb:
     parameters:
-      n_splits: {type:float, default=10} 
-      input_dir:  {type:str, default=None}
+      n_splits: {type:float, default=10}       
       objective: {type:str, default="reg:squarederror"}
       model_input: {type:str, default=None}
       model_output: {type:str, default=None}
 
     command: 
       "python3 xgb.py --n_splits {n_splits} --objective {objective}
-      --input_dir {input_dir}  --model_input {model_input} --model_output {model_output}"
+       --model_input {model_input} --model_output {model_output}"
 
   rf_regressor:
     parameters:
@@ -159,14 +158,13 @@ entry_points:
       epochs: { type:float, default=10 }
       batch_size: { type:float, default=7 }
       verbose: { type:float, default=1 }
-      input_dir: {type:str, default=None}
       model_input: {type:str, default=None}
       model_output: {type:str, default=None}
 
     command: "python3 cnn.py  --n_steps {n_steps} 
       --conv_filters {conv_filters} --n_features {n_features} --conv_kernel_size {conv_kernel_size} 
       --pool_size {pool_size} --hidden_units {hidden_units} --epochs {epochs} --batch_size {batch_size} 
-      --verbose {verbose} --input_dir {input_dir}  --model_input {model_input} --model_output {model_output}"
+      --verbose {verbose}   --model_input {model_input} --model_output {model_output}"
 
   lstm:
     parameters:

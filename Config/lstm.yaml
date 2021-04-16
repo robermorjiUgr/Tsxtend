@@ -3,7 +3,7 @@ model_output:               meter_reading
 input_dir_train:            Data/Ashrae/results/train
 input_dir_test:             Data/Ashrae/results/test
 n_steps:                    2
-hidden_units:               16
-epochs:                     1
-batch_size:                 16
+hidden_units:               10
+epochs:                     10
+batch_size:                 64
 verbose:                    1

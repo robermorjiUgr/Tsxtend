@@ -49,11 +49,13 @@ def display_scores(scores):
     print("Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores)))
 
 @click.command(help="Dado un fichero CSV, transformar en un artefacto mlflow")
-@click.option("--file_analysis", type=str,default=None)
+@click.option("--file_analysis_train", type=str,default=None)
+@click.option("--file_analysis_test", type=str,default=None)
 @click.option("--artifact_uri", type=str,default=None)
 @click.option("--experiment_id", type=str,default=None)
 @click.option("--run_id", type=str,default=None)
-@click.option("--input_dir", type=str,default=None)
+@click.option("--input_dir_train", type=str,default=None)
+@click.option("--input_dir_test", type=str,default=None)
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
@@ -77,31 +79,61 @@ def display_scores(scores):
 @click.option("--figure", type=str, default=False, help="figure")
 @click.option("--n_splits", type=int, default=10, help="Num Splits KFold")
 
-def RandomForest(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input,model_output,n_rows, 
+def RandomForest(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id,input_dir_train,input_dir_test, model_input,model_output,n_rows, 
 n_estimators,criterion,max_depth,min_samples_split, min_samples_leaf, min_weight_fraction_leaf,
 max_features,max_leaf_nodes, min_impurity_decrease, bootstrap,oob_score, n_jobs,
 random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
 
 
-    if not os.path.exists(input_dir+ "/rf_regressor"):
-        os.makedirs(input_dir+ "/rf_regressor")
+    if not os.path.exists(input_dir_train+ "rf_regressor"):
+        os.makedirs(input_dir_train+ "rf_regressor")
       
     # for file_analysis in list_file:
-    print(str(file_analysis))
-    mlflow.set_tag("mlflow.runName", "RANDOM FOREST REGRESSOR -  " + str(file_analysis.replace(".csv","").replace("train_","")))
-    path = input_dir + "/"+file_analysis
+    print(str(file_analysis_train))
+    mlflow.set_tag("mlflow.runName", "RANDOM FOREST REGRESSOR -  " + str(file_analysis_train.replace(".csv","").replace("train_","")))
+    path = input_dir_train + "/"+file_analysis_train
     
     df_origin = load_data(path,n_rows)
     
 
-    print("RANDOM FOREST REGRESSOR: " + str(file_analysis))
+    print("RANDOM FOREST REGRESSOR: " + str(file_analysis_train))
 
+    # Field Input Model
     if model_input:
         model_input = model_input.split(',')
         df = df_origin.filter(  model_input , axis=1)
     else:
         df = df_origin
     
+    # Data Normalize
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df = scaler.fit_transform(df) 
+    # X: All columns except last columns.
+    # y: last column.
+    X = df[:,0:len(model_input)-1]
+    y = df[:,len(model_input)-1:]
+
+    path = input_dir_test + "/"+file_analysis_test
+    df_origin = load_data(path,n_rows)  
+
+    print("DECISION  TREE REGRESSOR: " + str(file_analysis_test))
+    
+    # Field Input Model
+    if model_input:
+        df = df_origin.filter(  model_input , axis=1)
+    else:
+        df = df_origin
+    
+    # Data Normalize
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df = scaler.fit_transform(df) 
+
+    test_X = df[:,0:len(model_input)-1]
+    test_y = df[:,len(model_input)-1:]
+        
+    kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+
+    scores=[]
     rfr_model = RandomForestRegressor(n_estimators=n_estimators, criterion=criterion,
                                     max_depth=max_depth, min_samples_split=min_samples_split,
                                     min_samples_leaf=min_samples_leaf,
@@ -113,29 +145,16 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
                                     verbose=verbose, max_samples=None, warm_start=warm_start,
                                     ccp_alpha=ccp_alpha)
 
-    ### Data Normalice
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    df = scaler.fit_transform(df) 
-    
-    # Split  train, validate and test
-    # train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )
-    
-    # X: All columns except last columns.
-    # y: last column.
-    X = df[:,0:len(model_input)-1]
-    y = df[:,len(model_input)-1:]
-
-
-    kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
-
-    scores=[]
-
     for train_index, test_index in kfold.split(X):   
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]        
+        X_train, X_test = X[train_index], test_X[test_index]
+        y_train, y_test = y[train_index], test_y[test_index]
+   
         rfr_model.fit(X_train, y_train.ravel())        
         y_pred = rfr_model.predict(X_test)       
+    
         scores.append(mean_squared_error(y_test, y_pred))
+        # scores.append(mean_absolute_error(y_test,y_pred))
+    
     
     display_scores(np.sqrt(scores))
    
@@ -145,8 +164,8 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     mlflow.log_metric("mean", np.mean(scores))
     mlflow.log_metric("std", np.std(scores))
     
-    fn=model_input
-    cn=model_output
+    # fn=model_input
+    # cn=model_output
     # fig, axes = plt.subplots(nrows = 1,ncols = 1,figsize = (4,4), dpi=800)
     # tree.plot_tree(rfr_model.estimators_[0],
     #             feature_names = fn, 
@@ -155,8 +174,8 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     # plot
     plt.title("Random Forest Regression: KFold(n_split="+str(n_splits)+")")
     plt.bar(range(len(scores)), scores)
-    plt.savefig(input_dir+ "/rf_regressor/"+file_analysis.replace(".csv",'.png')) 
-    name_model = "model_rf_regressor_"+file_analysis.replace(".csv","")
+    plt.savefig(input_dir_train+ "rf_regressor/"+file_analysis_train.replace(".csv",'.png')) 
+    name_model = "model_rf_regressor_"+file_analysis_train.replace(".csv","")
     
     # SCHEMA MODEL MLFlow               
     _list_input_schema  = model_input
@@ -172,7 +191,7 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     # SAVE SCHEMA MODEL
     signature = ModelSignature(inputs=input_schema, outputs=output_schema)
     # LOG MODEL ARTIFACTS
-    mlflow.sklearn.log_model(sk_model=rfr_model,signature=signature,artifact_path=input_dir+"/rf_regressor" )
+    mlflow.sklearn.log_model(sk_model=rfr_model,signature=signature,artifact_path=input_dir_train+"rf_regressor" )
         
 
 def load_data( path, n_rows, fields=None):
