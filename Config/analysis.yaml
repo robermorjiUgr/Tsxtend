@@ -1,6 +1,5 @@
-fields: num_connections,delivery_perc,perc_of_active_connections,type_conn_perc,annual_consume,annual_consume_lowtarif_perc,smartmeter_perc
-input_dir:  Data/DUTCH-ENERGY/endinetGAS
-timeseries: False
+fields: air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_direction,wind_speed,meter_reading
+input_dir:  Data/ASHRAE/ashrae/results/train/
 
 # air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,
 # sea_level_pressure,wind_direction,wind_speed,meter_reading

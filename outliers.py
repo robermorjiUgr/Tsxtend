@@ -1,3 +1,4 @@
+
 #PYTHON
 import click
 import mlflow
@@ -66,17 +67,19 @@ def outliers(input_dir,n_rows,q1,q3,fields_include,alg_outliers):
             ax1.set_ylabel('Cantidad')
             ax1.boxplot(data,labels=labels)       
 
-            plt.savefig(input_dir+ "/outliers-values/boxplot_"+name_file+".jpeg", bbox_inches='tight')
+            plt.savefig(input_dir+ "/outliers/boxplot_"+name_file+".jpeg", bbox_inches='tight')
             plt.close('all')
 
         else:
+            print("Execute and create boxplot outliers: z-score-method-mean ")
+            name_file = csv.replace(".csv","")
             if alg_outliers == 'z_score_method_mean':
-                df_final = z_score_method_mean(df_outliers,q1,q3,fields_include,input_dir)
+                df_final = z_score_method_mean(df_outliers,q1,q3,fields_include,input_dir,name_file)
             # Update columns remove outliers in the Origin DataSet
             df_origin.update(df_final)
             df_origin.to_csv(path,encoding='utf-8')
        
-    mlflow.log_artifacts(input_dir+ "/outliers-values")
+    mlflow.log_artifacts(input_dir+ "/outliers/")
     
 
 def load_data(path_df, n_rows, fields=[]):
@@ -92,14 +95,14 @@ def create_csv(dataframe, path_csv, name_csv):
     collect.Collections.createCSV(dataframe,path_csv,name_csv)
 
 
-def z_score_method_mean(df,q1,q3,fields_include,input_dir):
+def z_score_method_mean(df,q1,q3,fields_include,input_dir,name_file):
     # Get only columns necessary    
     df.index.name = 'index'
     processing_include = df.filter(fields_include,axis=1)
 
     # Draw DataFrame before algorithm outliers
     df.boxplot()
-    plt.savefig(input_dir+"/outliers-values/before_outliers.jpeg")
+    plt.savefig(input_dir+"/outliers-values/"+name_file+"_before_outliers.jpeg")
 
     q1 = processing_include.quantile(q1)
     q3 = processing_include.quantile(q3)
@@ -115,7 +118,7 @@ def z_score_method_mean(df,q1,q3,fields_include,input_dir):
     # Draw DataFrame after algorithm outliers
     plt.cla() # clean plt
     df.boxplot()
-    plt.savefig(input_dir+"/outliers-values/after_outliers.jpeg")
+    plt.savefig(input_dir+"/outliers-values/"+name_file+"_after_outliers.jpeg")
     
     return df
 

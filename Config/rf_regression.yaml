@@ -1,6 +1,7 @@
-model_input:                delivery_perc,perc_of_active_connections,annual_consume,annual_consume_lowtarif_perc,smartmeter_perc
-model_output:               annual_consume
-input_dir:                  Data/DUTCH-ENERGY/endinetGAS
+model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_direction,wind_speed
+model_output:               meter_reading
+input_dir_train:            Data/ASHRAE/ashrae/results/train/
+input_dir_test:             Data/ASHRAE/ashrae/results/test/
 n_estimators:               100
 criterion:                  mse
 max_depth:                  5

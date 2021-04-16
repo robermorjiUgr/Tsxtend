@@ -1,7 +1,7 @@
-etl:      partition-data
-deepl:    ""
-mlearn:   ""
-n_rows:   0.0
+etl:      analysis,missing-values,feature-selection
+deepl:    cnn,lstm,mlp,mlp_headed
+mlearn:   xgb,dtree_regressor,rf_regressor
+n_rows:   100000
 elements: ""
 input_dir: Data/ASHRAE/ashrae/results/
 output_dir: Data/ASHRAE/ashrae/results/

@@ -21,6 +21,7 @@ from mlflow.types.schema import Schema, ColSpec
 import Collection.collection  as collect
 
 #KERAS
+import keras
 from keras.datasets import imdb
 from keras.preprocessing import sequence
 from keras import layers
@@ -30,6 +31,7 @@ from keras.optimizers import RMSprop
 from keras.layers.merge import concatenate
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
+from keras.losses import Huber
 
 #SKLEARN
 from sklearn.preprocessing import MinMaxScaler
@@ -37,11 +39,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 
 @click.command(help="Dado un fichero CSV, transformar en un artefacto mlflow")
-@click.option("--file_analysis", type=str,default=None)
+@click.option("--file_analysis_train", type=str,default=None)
+@click.option("--file_analysis_test", type=str,default=None)
 @click.option("--experiment_id", type=str,default=None)
 @click.option("--run_id", type=str,default=None)
 @click.option("--artifact_uri", type=str,default=None)
-@click.option("--input_dir", type=str,default=None)
+@click.option("--input_dir_train", type=str,default=None)
+@click.option("--input_dir_test", type=str,default=None)
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
@@ -56,22 +60,22 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 @click.option("--batch_size", type=int, default=72, help="Batch Size")
 @click.option("--verbose", type=int, default=1, help="Verbose")
 
-def cnn(file_analysis,artifact_uri,experiment_id, run_id, input_dir, model_input, model_output,n_rows, elements, n_steps, n_features,
+def cnn(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id, input_dir_train,input_dir_test, model_input, model_output,n_rows, elements, n_steps, n_features,
 conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose):
     
-
-    if not os.path.exists(input_dir+ "/cnn"):
-        os.makedirs(input_dir+ "/cnn")
+    # import ipdb; ipdb.set_trace();
+    if not os.path.exists(input_dir_train+ "cnn"):
+        os.makedirs(input_dir_train+ "cnn")
    
     # for file_analysis in list_file:
-    print(str(file_analysis))
-    mlflow.set_tag("mlflow.runName", "CNN -  " + str(file_analysis.replace(".csv","").replace("train_","")))
+    print(str(file_analysis_train))
+    mlflow.set_tag("mlflow.runName", "CNN -  " + str(file_analysis_train.replace(".csv","").replace("train_","")))
    
-    path = input_dir + "/"+file_analysis
+    path = input_dir_train + "/"+file_analysis_train
     
     df_origin = load_data(path,n_rows)
    
-    print("CNN: " + str(file_analysis))
+    print("CNN: " + str(file_analysis_train))
 
     
     if model_input:
@@ -86,7 +90,7 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     df = scaler.fit_transform(df) 
     
     # Split  train, validate and test
-    train,  validate, test = np.split(df,[ int( .7*len(df) ), int( .9 * len(df)) ] )
+    train,validate = np.split(df,[ int( .9*len(df) ) ])
   
     # Preparation data sequences TRAIN
     X,y = preparation_data(train, n_steps, model_input)
@@ -95,6 +99,22 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     validate_X,validate_y = preparation_data(validate, n_steps, model_input)
     
     # Preparation data sequences TEST
+    #test_X,test_y = preparation_data(test, n_steps, model_input)
+
+    path = input_dir_test+ "/"+file_analysis_test
+    df_origin = load_data(path,n_rows)
+
+    print("CNN Test: " + str(file_analysis_test))
+    
+    if model_input:
+        df = df_origin.filter(  model_input , axis=1)
+    else:
+        df = df_origin
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df = scaler.fit_transform(df) 
+    
+    test = df
     test_X,test_y = preparation_data(test, n_steps, model_input)
    
     
@@ -102,13 +122,15 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     n_features = X.shape[2]
     
     # MODEL
+    # opt = keras.optimizers.RMSprop()
+    opt = keras.optimizers.SGD(lr=1e-5, momentum=0.9)
     model = Sequential()
     model.add(Conv1D(filters=conv_filters, kernel_size=conv_kernel_size, activation='relu', input_shape=(n_steps, n_features)))
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     model.add(Dense(hidden_units, activation='relu'))
     model.add(Dense(1))
-    model.compile(optimizer='rmsprop', loss='mse')
+    model.compile(loss=keras.losses.Huber(), optimizer=opt,metrics=['mae','mse'])
     history = model.fit(X, y,
                 epochs=epochs, 
                 batch_size=batch_size, 
@@ -118,9 +140,9 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     # PREDICT
     #import ipdb; ipdb.set_trace()
     test_predict = model.predict(test_X,verbose=0)
-    (rmse, mae,r2) = eval_metrics(test_y, test_predict)
+    (rmse, mse, mae, r2) = eval_metrics(test_y, test_predict)
     
-    name_model = "model_cnn_"+file_analysis.replace(".csv","")
+    name_model = "model_cnn_"+file_analysis_train.replace(".csv","")
     
     # SCHEMA MODEL MLFlow    
     _list_input_schema  = model_input[:-1]
@@ -136,20 +158,27 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     # SAVE SCHEMA MODEL
     signature = ModelSignature(inputs=input_schema, outputs=output_schema)
     # LOG MODEL ARTIFACTS
-    mlflow.keras.log_model(keras_model=model,signature=signature,artifact_path=input_dir+"/cnn")
+    mlflow.keras.log_model(keras_model=model,signature=signature,artifact_path=input_dir_train+"cnn")
     
+    plt.title(file_analysis_train)
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
-    plt.title('model loss')
+    plt.plot(history.history['mae'])
+    plt.plot(history.history['val_mae'])
+    plt.plot(history.history['mse'])
+    plt.plot(history.history['val_mse'])
+    plt.title('MAE and Loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.legend(['train loss', 'validate loss'], loc='upper left')
-    plt.savefig(input_dir+"/cnn/"+file_analysis.replace(".csv","") + ".png")
+    plt.legend(['train loss', 'validate loss','mae','val_mae','mse','val_mse'], loc='upper left')
+    plt.savefig(input_dir_train+"/cnn/"+file_analysis_train.replace(".csv","") + ".png")
+
      
-    mlflow.log_artifact(input_dir+"/cnn/"+file_analysis.replace(".csv","")+".png")
+    mlflow.log_artifact(input_dir_train+"/cnn/"+file_analysis_train.replace(".csv","")+".png")
 
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("mae", mae)
+    mlflow.log_metric("mse", mse)
     mlflow.log_metric("r2",r2)
     
     #mlflow.sklearn.log_model(model,str(output_dir)+"/cnn_model")
@@ -192,9 +221,10 @@ def preparation_data(data, n_steps, model_input):
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
+    mse = mean_squared_error(actual, pred)
     mae = mean_absolute_error(actual, pred)
     r2 = r2_score(actual, pred)
-    return rmse, mae, r2
+    return rmse, mse, mae, r2
 
 
 if __name__=="__main__":

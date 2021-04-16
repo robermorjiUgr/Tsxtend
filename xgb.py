@@ -45,33 +45,35 @@ from  xgboost import DMatrix
 
 
 @click.command(help="Dado un fichero CSV, transformar en un artefacto mlflow")
-@click.option("--file_analysis", type=str,default=None)
+@click.option("--file_analysis_train", type=str,default=None)
+@click.option("--file_analysis_test", type=str,default=None)
 @click.option("--artifact_uri", type=str,default=None)
 @click.option("--experiment_id", type=str,default=None)
 @click.option("--run_id", type=str,default=None)
-@click.option("--input_dir", type=str,default=None)
+@click.option("--input_dir_train", type=str,default=None)
+@click.option("--input_dir_test", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
 @click.option("--model_input",  type=str, default=None)
 @click.option("--model_output",  type=str, default=None)
 @click.option("--n_splits", type=int, default=10, help="Num Splits KFold")
 @click.option("--objective", type=str, default="reg:squarederror", help="Objective")
 
-def xgboost(file_analysis,artifact_uri,experiment_id, run_id, input_dir,n_rows,
+def xgboost(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id, input_dir_train,input_dir_test,n_rows,
 model_input,model_output,n_splits, objective ):
     
-    if not os.path.exists(input_dir+ "/xgboost"):
-        os.makedirs(input_dir+ "/xgboost")
+    if not os.path.exists(input_dir_train+ "xgboost"):
+        os.makedirs(input_dir_train+ "xgboost")
 
     
     # for file_analysis in list_file:
-    print(str(file_analysis))
-    mlflow.set_tag("mlflow.runName", "XGBOOST -  " + str(file_analysis.replace(".csv","").replace("train_","")))
-    path = input_dir + "/"+file_analysis
+    print(str(file_analysis_train))
+    mlflow.set_tag("mlflow.runName", "XGBOOST -  " + str(file_analysis_train.replace(".csv","").replace("train_","")))
 
-    
+
+    path = input_dir_train + "/"+file_analysis_train
     df_origin = load_data(path,n_rows)  
 
-    print("XGBOOST: " + str(file_analysis))
+    print("XGBOOST: " + str(file_analysis_train))
     
     # Field Input Model
     if model_input:
@@ -79,7 +81,6 @@ model_input,model_output,n_splits, objective ):
         df = df_origin.filter(  model_input , axis=1)
     else:
         df = df_origin
-
     
     # Data Normalize
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -89,21 +90,40 @@ model_input,model_output,n_splits, objective ):
     X = df[:,0:len(model_input)-1]
     y = df[:,len(model_input)-1:]
 
+    path = input_dir_test + "/"+file_analysis_test
+    df_origin = load_data(path,n_rows)  
+
+    print("XGBOOST: " + str(file_analysis_test))
+    
+    # Field Input Model
+    if model_input:
+        df = df_origin.filter(  model_input , axis=1)
+    else:
+        df = df_origin
+    
+    # Data Normalize
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df = scaler.fit_transform(df) 
+
+    test_X = df[:,0:len(model_input)-1]
+    test_y = df[:,len(model_input)-1:]
+
 
     kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
 
     scores=[]
+    xgb_model = xgb.XGBRegressor(objective=objective,verbosity=1)
 
     for train_index, test_index in kfold.split(X):   
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
+        X_train, X_test = X[train_index], test_X[test_index]
+        y_train, y_test = y[train_index], test_y[test_index]
 
-        xgb_model = xgb.XGBRegressor(objective=objective)
-        xgb_model.fit(X_train, y_train)
         
+        xgb_model.fit(X_train, y_train)
         y_pred = xgb_model.predict(X_test)
         
         scores.append(mean_squared_error(y_test, y_pred))
+        # scores.append(mean_absolute_error(y_test,y_pred))
 
     display_scores(np.sqrt(scores))   
 
@@ -120,8 +140,8 @@ model_input,model_output,n_splits, objective ):
     plt.title("XGBOOST Regression: KFold(n_split="+str(n_splits)+")")
     plt.bar(range(len(scores)), scores)
     # plt.bar(range(len(xgb_model.feature_importances_)), xgb_model.feature_importances_)
-    plt.savefig(input_dir+ "/xgboost/"+file_analysis.replace(".csv",'.png')) 
-    name_model = "model_xgboost_"+file_analysis.replace(".csv","")
+    plt.savefig(input_dir_train+ "xgboost/"+file_analysis_train.replace(".csv",'.png')) 
+    name_model = "model_xgboost_"+file_analysis_train.replace(".csv","")
 
     # SCHEMA MODEL MLFlow           
     _list_input_schema  = model_input
@@ -137,7 +157,7 @@ model_input,model_output,n_splits, objective ):
     # SAVE SCHEMA MODEL
     signature = ModelSignature(inputs=input_schema, outputs=output_schema)
     # LOG MODEL ARTIFACTS
-    mlflow.xgboost.log_model(xgb_model=xgb_model,signature=signature,artifact_path=input_dir+"/xgboost" )
+    mlflow.xgboost.log_model(xgb_model=xgb_model,signature=signature,artifact_path=input_dir_train+"xgboost" )
 
 '''
     display_scores(): 
