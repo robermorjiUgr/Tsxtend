@@ -97,17 +97,18 @@ def workflow():
     mlearn      = main_yaml_file['mlearn']
     etl         = main_yaml_file['etl']
     n_rows      = main_yaml_file['n_rows']
-    elements    = main_yaml_file['elements']
-    input_dir   = main_yaml_file['input_dir']
-    output_dir  = main_yaml_file['output_dir']
+    # elements    = main_yaml_file['elements']
+    # input_dir   = main_yaml_file['input_dir']
+    # output_dir  = main_yaml_file['output_dir']
     
-    # Create folder output_dir
-    if not os.path.exists(str(output_dir)):
-        os.makedirs(str(output_dir))  
+    # # Create folder output_dir
+    # if not os.path.exists(str(output_dir)):
+    #     os.makedirs(str(output_dir))  
 
     # Run active run.
     with mlflow.start_run() as active_run:
         name_RunParent = ""
+
 
         if deepl:
             name_RunParent += deepl
@@ -123,6 +124,31 @@ def workflow():
             etl = etl.split(",")
         
         for item in etl:
+            '''
+            Partition Data:
+                Algorithm:
+                    - Group by data and create new subset data. 
+                    - Group by data any fields.
+                    - Group by data in several levels. 
+            ''' 
+            if item=="partition-data":
+                a_yaml_file = open("Config/partition-data.yaml")
+                parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                print(parsed_yaml_file)
+                
+                # Parameters get from YAML file [ main, partition-data ]
+                parameters = {
+                    "n_rows":           n_rows,
+                    "date_init":        parsed_yaml_file['date_init'],
+                    "date_end":         parsed_yaml_file['date_end'],
+                    "fields_include":   parsed_yaml_file['fields_include'],
+                    "group_by_parent":  parsed_yaml_file['group_by_parent'],
+                    "type_dataset":     parsed_yaml_file['type_dataset'],
+                    "output_dir":       parsed_yaml_file['output_dir'],
+                    "file_input":       parsed_yaml_file['file_input'],
+                }
+
+                partition = _get_or_run("partitionDF",parameters)
 
             '''
             Analysis DataSet:
@@ -143,10 +169,10 @@ def workflow():
                 # Parameters get from YAML file [ main, analysis ]
                 parameters = {
                     "n_rows":       n_rows,
-                    "elements":     elements,
+                    # "elements":     elements,
                     "fields":       parsed_yaml_file['fields'],
                     "input_dir":    parsed_yaml_file['input_dir'],
-                    
+                    "output_dir":    parsed_yaml_file['output_dir'],
                 }
                 
                 analysis = _get_or_run("analysis_data",parameters)
@@ -181,31 +207,7 @@ def workflow():
             #     }
                 
             #     visualization = _get_or_run("visualization_data",parameters)
-            '''
-            Partition Data:
-                Algorithm:
-                    - Group by data and create new subset data. 
-                    - Group by data any fields.
-                    - Group by data in several levels. 
-            ''' 
-            if item=="partition-data":
-                a_yaml_file = open("Config/partition-data.yaml")
-                parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                print(parsed_yaml_file)
-                
-                # Parameters get from YAML file [ main, partition-data ]
-                parameters = {
-                    "n_rows":           n_rows,
-                    "date_init":        parsed_yaml_file['date_init'],
-                    "date_end":         parsed_yaml_file['date_end'],
-                    "path_data":        parsed_yaml_file['path_data'],
-                    "fields_include":   parsed_yaml_file['fields_include'],
-                    "group_by_parent":  parsed_yaml_file['group_by_parent'],
-                    "output_dir":       parsed_yaml_file['output_dir'],
-                    "type_dataset":     parsed_yaml_file['type_dataset'],
-                }
-
-                partition = _get_or_run("partitionDF",parameters)
+            
 
             '''
             Missing Values:
@@ -558,8 +560,8 @@ def workflow():
                             mlp_headed = _get_or_run("mlp_headed", parameters=parameters)  
                 
                     
-        if output_dir!=None:
-            mlflow.log_artifacts(output_dir)
+        # if output_dir!=None:
+        #     mlflow.log_artifacts(output_dir)
         mlflow.end_run()
 
     

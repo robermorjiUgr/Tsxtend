@@ -26,18 +26,19 @@ import Collection.collection  as collect
 @click.option("--n_rows",default=None, type=float)
 @click.option("--fields",default=None, type=str)
 @click.option("--input_dir",default=None, type=str)
+@click.option("--output_dir",default=None, type=str)
 @click.option("--elements",default=None, type=str)
 
-def Analysis(n_rows,fields, input_dir,elements):
+def Analysis(n_rows,fields, input_dir,output_dir,elements):
     
     mlflow.set_tag("mlflow.runName", "Data Analysis")
        
-    if not os.path.exists(input_dir+ "/analysis"):
-        os.makedirs(input_dir+ "/analysis/data/bloxplot")  
-        os.makedirs(input_dir+ "/analysis/data/summary")  
-        os.makedirs(input_dir+ "/analysis/data/graph-line")  
-        os.makedirs(input_dir+ "/analysis/data/barplot")  
-        os.makedirs(input_dir+ "/analysis/data/logs")  
+    if not os.path.exists(output_dir+ "analysis"):
+        os.makedirs(output_dir+ "analysis/data/bloxplot")  
+        os.makedirs(output_dir+ "analysis/data/summary")  
+        os.makedirs(output_dir+ "analysis/data/graph-line")  
+        os.makedirs(output_dir+ "analysis/data/barplot")  
+        os.makedirs(output_dir+ "analysis/data/logs")  
 
         
 
@@ -64,15 +65,15 @@ def Analysis(n_rows,fields, input_dir,elements):
         print("Create summary html")
         df_analysis = pd.DataFrame(columns=['Mean','Median','Std','Q1','Q2','Q3','Min','Max'])
         #import ipdb; ipdb.set_trace()
-        df_analysis['Mean']   = df_origin.mean(axis=0)
-        df_analysis['Median'] = df_origin.median(axis=0)
-        df_analysis['Std']    = df_origin.std(axis=0)
+        df_analysis['Mean']   = df_origin.mean(axis=0,skipna=True)
+        df_analysis['Median'] = df_origin.median(axis=0,skipna=True)
+        df_analysis['Std']    = df_origin.std(axis=0,skipna=True)
         df_analysis['Q1']     = df_origin.quantile(q=0.25, axis=0)
         df_analysis['Q2']     = df_origin.quantile(q=0.5, axis=0)
         df_analysis['Q3']     = df_origin.quantile(q=0.75, axis=0)
-        df_analysis['Min']    = df_origin.min(axis=0)
-        df_analysis['Max']    = df_origin.max(axis=0)
-        df_analysis.to_html(buf=input_dir+ "/analysis/data/summary/summary_"+name_file+".html", justify='justify', border='border')
+        df_analysis['Min']    = df_origin.min(axis=0,skipna=True)
+        df_analysis['Max']    = df_origin.max(axis=0,skipna=True)
+        df_analysis.to_html(buf=output_dir+ "/analysis/data/summary/summary_"+name_file+".html", justify='justify', border='border')
         logs(df_analysis,input_dir,name_file)
 
 
@@ -140,8 +141,8 @@ def logs (df,path,filename):
     my_logger.setLevel(logging.INFO)
 
     # Add the log message handler to the logger
-    handler = logging.handlers.RotatingFileHandler(
-        LOG_FILENAME
+    handler = logging.FileHandler(
+        LOG_FILENAME, mode='w'
     )
     my_logger.addHandler(handler)
     # logging.basicConfig(filename=log_file, level=logging.INFO)
@@ -154,6 +155,7 @@ def logs (df,path,filename):
     my_logger.info("\n\nMin ---- \n"        + str(df['Min'])     )
     my_logger.info("\n\nMax ---- \n"        + str(df['Max'])     )
     
+    handler.close()
 
 if __name__=="__main__":
     Analysis()

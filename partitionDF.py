@@ -18,45 +18,49 @@ import Collection.collection  as collect
 
 
 @click.command(
-    help="Dado un fichero CSV, transformarlo  mlflow"
+    help="Give you CSV file and algorithm group by"
 )
 @click.option("--date_init", type=str, default="", help="Fecha inicio que ayuda a discriminar por estaciones")
 @click.option("--date_end",type=str, default="", help="Fecha final que ayuda a discriminar por estaciones")
-@click.option("--path_data", type=str, default="train.csv", help="Ruta del fichero CSV")
 @click.option("--n_rows", type=float, default=0, help="número de filas a extraer, 0 extrae todo")
 @click.option("--fields_include", type=str, default=None, help="Incluir los siguientes campos")
 @click.option("--group_by_parent", type=str, help="filtrar por un campo de las columnas")
-@click.option("--output_dir", type=str,default="output/")
 @click.option("--type_dataset", type=str,default="")
+@click.option("--output_dir", type=str,default="output/")
+@click.option("--file_input", type=str, default="", help="Ruta del fichero CSV")
 
-def PartitionDF(date_init, date_end, path_data, n_rows, 
+def PartitionDF(date_init, date_end, file_input, n_rows, 
 fields_include,group_by_parent, output_dir,type_dataset):
     
     mlflow.set_tag("mlflow.runName", "Data Partition")
+    # Create folder output_dir
+    
+    if not os.path.exists(str(output_dir)):
+        os.makedirs(str(output_dir))  
+
     if date_init != 'None' or date_end != 'None':
         date_init = pd.to_datetime(date_init,format="%Y-%m-%d %H:%M:%S")
         date_end  = pd.to_datetime(date_end,format="%Y-%m-%d %H:%M:%S")
     
     
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)  
-
+    
     if fields_include!='None':
         fields_include = fields_include.split(",")
-        df_origin = load_data(path_data, int(n_rows), fields_include)
+        df_origin = load_data(file_input, int(n_rows), fields_include)
     else:
-        df_origin = load_data(path_data, int(n_rows))
+        df_origin = load_data(file_input, int(n_rows))
         
+    # GET DataSet filter for timestamp
     if date_init != 'None' or date_end != 'None':
-        # GET DataSet filter for timestamp
         df_origin['timestamp'] = pd.to_datetime(df_origin['timestamp'],format="%Y-%m-%d %H:%M:%S")
         mask = ( df_origin['timestamp'] >= date_init ) & ( df_origin['timestamp'] <= date_end )
         df_origin = df_origin.loc[mask]
         df_origin.set_index('timestamp',drop=True,inplace=True)
 
+    # Tree where group by for every element.
     list_groups = []
-   
     if group_by_parent != 'None':
+        # Option  if  you want to do some group by
         
         group_by_parent = group_by_parent.split(",")  
         
@@ -65,9 +69,9 @@ fields_include,group_by_parent, output_dir,type_dataset):
         
         # Tree create csv for groups
         query       =  []
-        _query      =  []    # Tuples query store
-        _l_tupla    =  []   # 
-        arbol       =  {}      # Group by field
+        _query      =  []   # Tuples query store
+        _l_tupla    =  []    
+        arbol       =  {}    # Group by field
         
         # Recursivity: create tree field
         for ind in range(0,len(list_groups[0])):
@@ -84,27 +88,27 @@ fields_include,group_by_parent, output_dir,type_dataset):
                 list_name_csv = _format_name_csv(q_child)
                 
                 if type_dataset=="train":
-                    name_csv = "/train"
+                    name_csv = "train"
                 else:
-                    name_csv = "/test"
-                # Name CSV
+                    name_csv = "test"
+                # Create and rename CSV: Two options train and test
                 for element in list_name_csv:
                     name_csv += "_"+element[0]+"_"+element[1].replace('/',"").replace("'","")
                 name_csv+=".csv"            
                 
+                # Only create dataframe if it has some data.
                 if not df_final.empty:
                     print("Creation trainning partitions: " + name_csv)
                     create_csv(df_final, output_dir, name_csv,index=True)
-                  
                 else:
                     print("Not creation trainning partitions: " + name_csv + " DataFrame have not values")
     else:
+        # Option  if  you don't want to do anything group by
         if type_dataset=="train":
-            name_csv = "/train"
+            name_csv = "train.csv"
         else:
-            name_csv = "/test"
+            name_csv = "test.csv"
 
-        import ipdb; ipdb.set_trace()
         print("Creation trainning partitions: " + name_csv)
         create_csv(df_origin, output_dir, name_csv,index=True)
        
