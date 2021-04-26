@@ -8,9 +8,10 @@ entry_points:
     parameters:
       fields:  {type:str, default=None}
       input_dir: {type:str, default=None}
+      output_dir: {type:str, default=None}
       
     command:
-      "python3 analysis.py --fields {fields} --input_dir {input_dir}"
+      "python3 analysis.py --fields {fields} --input_dir {input_dir} --output_dir {output_dir}"
   
   visualization_data:
     parameters:
@@ -27,16 +28,16 @@ entry_points:
 
   partitionDF:
     parameters:
+        n_rows:    {type:float, default=0.0}
         date_init: {type:str, default="2016-01-01"}
         date_end:  {type:str, default="2016-12-31"}      
-        path_data:  {type:str, default="train.csv"}
-        n_rows:    {type:float, default=0.0}
         fields_include: {type:str, default=None}
         group_by_parent: {type:str, default=None}
-        output_dir: {type:str, default="output/"}
         type_dataset: {type:str, default=""}
+        output_dir: {type:str, default="output/"}
+        file_input:  {type:str, default=""}
 
-    command: "python3 partitionDF.py  --date_init {date_init} --date_end {date_end} --path_data {path_data}
+    command: "python3 partitionDF.py  --date_init {date_init} --date_end {date_end} --file_input {file_input}
     --n_rows {n_rows} --fields_include {fields_include} --group_by_parent {group_by_parent}  
     --output_dir {output_dir} --type_dataset {type_dataset}"
 

@@ -1,9 +1,9 @@
-etl:      analysis,missing-values,feature-selection
-deepl:    cnn,lstm,mlp,mlp_headed
-mlearn:   xgb,dtree_regressor,rf_regressor
+etl:      analysis
+deepl:    ""
+mlearn:   ""
 n_rows:   100000
 elements: ""
-input_dir: Data/ASHRAE/ashrae/results/
-output_dir: Data/ASHRAE/ashrae/results/
-input_dir_train: Data/ASHRAE/ashrae/results/train/
-input_dir_test: Data/ASHRAE/ashrae/results/test/
+# input_dir: Data/ASHRAE/ashrae/working-data/train/
+# output_dir: Data/ASHRAE/ashrae/results/
+# input_dir_train: Data/ASHRAE/ashrae/results/train/
+# input_dir_test: Data/ASHRAE/ashrae/results/test/
