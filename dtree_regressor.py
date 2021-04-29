@@ -56,6 +56,7 @@ from  xgboost import DMatrix
 @click.option("--run_id", type=str,default=None)
 @click.option("--input_dir_train", type=str,default=None)
 @click.option("--input_dir_test", type=str,default=None)
+@click.option("--output_dir", type=str,default=None)
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
@@ -73,10 +74,14 @@ from  xgboost import DMatrix
 
 def DecisionTree(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id, input_dir_train,input_dir_test,model_input,model_output,n_rows,
 max_depth, criterion, splitter,min_samples_split, min_samples_leaf, min_weight_fraction_leaf,max_features, random_state,
-max_leaf_nodes, figure, n_splits):
+max_leaf_nodes, figure, n_splits,output_dir):
     
-    if not os.path.exists(input_dir_train+ "decision_tree_regressor"):
-        os.makedirs(input_dir_train+ "decision_tree_regressor")
+    # import ipdb; ipdb.set_trace();
+    
+    name_place  = file_analysis_train.split(".csv")[0].split("train_")[1]
+    result_dir  = output_dir + name_place +"/dtree_regression/"
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
  
     # for file_analysis in list_file:
     print(str(file_analysis_train))
@@ -139,7 +144,7 @@ max_leaf_nodes, figure, n_splits):
         # scores.append(mean_absolute_error(y_test,y_pred))
     
     display_scores(np.sqrt(scores))
-   
+    logs(result_dir,"dtree_regressor.txt",scores,np.mean(scores),np.std(scores))
     
     for idx in range(len(scores)):
         mlflow.log_metric("scores",scores[idx], step=idx+1 )
@@ -155,7 +160,7 @@ max_leaf_nodes, figure, n_splits):
     # PLOT
     plt.title("Decision Tree Regression: KFold(n_split="+str(n_splits)+")")
     plt.bar(range(len(scores)), scores)
-    plt.savefig(input_dir_train+ "decision_tree_regressor/"+file_analysis_train.replace(".csv",'.png')) 
+    plt.savefig(result_dir+"dtree_regressor_"+name_place) 
     name_model = "model_dtree_regressor_"+file_analysis_train.replace(".csv","")
     
     # SCHEMA MODEL MLFlow   
@@ -174,11 +179,28 @@ max_leaf_nodes, figure, n_splits):
     mlflow.sklearn.log_model(sk_model=dtree_model,signature=signature,artifact_path=input_dir_train+"dtree_regressor" )
     
 def display_scores(scores):
-    print("Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores)))
+    return "Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores))
 
 def load_data( path, n_rows, fields=None):
     dataframe = collect.Collections.readCSV(path,n_rows,fields)
     return dataframe
-   
+
+def logs (path,filename,scores,mean,std):
+    # import ipdb; ipdb.set_trace()
+    print(filename)
+    FILENAME =  path + filename
+    f = open(FILENAME,"w+")
+    
+    str_display = display_scores(np.sqrt(scores)) 
+    for idx in range(len(scores)):
+        f.write("\n scores "+str(idx) + ": " + str(scores[idx]) )
+
+    f.write("\nMean: " +  str(np.mean(scores)))
+    f.write("\nStd: "  +  str(np.std(scores)))
+    f.write("\nDisplay Scores: " + str_display)
+    
+    f.close()
+
+
 if __name__ == '__main__':
     DecisionTree()

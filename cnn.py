@@ -46,6 +46,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 @click.option("--artifact_uri", type=str,default=None)
 @click.option("--input_dir_train", type=str,default=None)
 @click.option("--input_dir_test", type=str,default=None)
+@click.option("--output_dir", type=str,default=None)
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
@@ -61,11 +62,12 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 @click.option("--verbose", type=int, default=1, help="Verbose")
 
 def cnn(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id, input_dir_train,input_dir_test, model_input, model_output,n_rows, elements, n_steps, n_features,
-conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose):
+conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose,output_dir):
     
-    # import ipdb; ipdb.set_trace();
-    if not os.path.exists(input_dir_train+ "cnn"):
-        os.makedirs(input_dir_train+ "cnn")
+    name_place  = file_analysis_train.split(".csv")[0].split("train_")[1]
+    result_dir  = output_dir + name_place +"/cnn/"
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
    
     # for file_analysis in list_file:
     print(str(file_analysis_train))
@@ -141,7 +143,7 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     #import ipdb; ipdb.set_trace()
     test_predict = model.predict(test_X,verbose=0)
     (rmse, mse, mae, r2) = eval_metrics(test_y, test_predict)
-    
+    # import ipdb;ipdb.set_trace();
     name_model = "model_cnn_"+file_analysis_train.replace(".csv","")
     
     # SCHEMA MODEL MLFlow    
@@ -171,16 +173,16 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train loss', 'validate loss','mae','val_mae','mse','val_mse'], loc='upper left')
-    plt.savefig(input_dir_train+"/cnn/"+file_analysis_train.replace(".csv","") + ".png")
+    plt.savefig(result_dir+"cnn_"+name_place)
 
      
-    mlflow.log_artifact(input_dir_train+"/cnn/"+file_analysis_train.replace(".csv","")+".png")
+    mlflow.log_artifact(result_dir+"cnn_"+name_place+".png")
 
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("mae", mae)
     mlflow.log_metric("mse", mse)
     mlflow.log_metric("r2",r2)
-    
+    logs(result_dir,"cnn.txt",rmse,mae,mse,r2)
     #mlflow.sklearn.log_model(model,str(output_dir)+"/cnn_model")
     
             
@@ -226,6 +228,18 @@ def eval_metrics(actual, pred):
     r2 = r2_score(actual, pred)
     return rmse, mse, mae, r2
 
+def logs (path,filename,rmse, mse, mae, r2):
+    # import ipdb; ipdb.set_trace()
+    print(filename)
+    FILENAME =  path + filename
+    f = open(FILENAME,"w+")
+    
+    f.write("\nrmse: " +    str(rmse))
+    f.write("\nmse: "  +    str(mse))
+    f.write("\nmae: "  +    str(mae))
+    f.write("\nr2: "   +    str(r2))
+    
+    f.close()
 
 if __name__=="__main__":
     cnn()

@@ -45,8 +45,7 @@ import xgboost as xgb
 from  xgboost import DMatrix
 
 
-def display_scores(scores):
-    print("Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores)))
+
 
 @click.command(help="Dado un fichero CSV, transformar en un artefacto mlflow")
 @click.option("--file_analysis_train", type=str,default=None)
@@ -56,6 +55,7 @@ def display_scores(scores):
 @click.option("--run_id", type=str,default=None)
 @click.option("--input_dir_train", type=str,default=None)
 @click.option("--input_dir_test", type=str,default=None)
+@click.option("--output_dir", type=str,default=None)
 @click.option("--model_input", type=str,default=None)
 @click.option("--model_output", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
@@ -79,14 +79,16 @@ def display_scores(scores):
 @click.option("--figure", type=str, default=False, help="figure")
 @click.option("--n_splits", type=int, default=10, help="Num Splits KFold")
 
-def RandomForest(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id,input_dir_train,input_dir_test, model_input,model_output,n_rows, 
-n_estimators,criterion,max_depth,min_samples_split, min_samples_leaf, min_weight_fraction_leaf,
-max_features,max_leaf_nodes, min_impurity_decrease, bootstrap,oob_score, n_jobs,
+def RandomForest(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id,input_dir_train,input_dir_test,
+model_input,model_output,n_rows,output_dir, n_estimators,criterion,max_depth,min_samples_split, min_samples_leaf, 
+min_weight_fraction_leaf,max_features,max_leaf_nodes, min_impurity_decrease, bootstrap,oob_score, n_jobs,
 random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
+    # import ipdb; ipdb.set_trace();
 
-
-    if not os.path.exists(input_dir_train+ "rf_regressor"):
-        os.makedirs(input_dir_train+ "rf_regressor")
+    name_place  = file_analysis_train.split(".csv")[0].split("train_")[1]
+    result_dir  = output_dir + name_place +"/rf_regression/"
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
       
     # for file_analysis in list_file:
     print(str(file_analysis_train))
@@ -116,7 +118,7 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     path = input_dir_test + "/"+file_analysis_test
     df_origin = load_data(path,n_rows)  
 
-    print("DECISION  TREE REGRESSOR: " + str(file_analysis_test))
+    print("RANDOM FOREST REGRESSOR: " + str(file_analysis_test))
     
     # Field Input Model
     if model_input:
@@ -157,24 +159,17 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
     
     
     display_scores(np.sqrt(scores))
-   
+    logs(result_dir,"rf_regressor.txt",scores,np.mean(scores),np.std(scores))
     
     for idx in range(len(scores)):
         mlflow.log_metric("scores",scores[idx], step=idx+1 )
     mlflow.log_metric("mean", np.mean(scores))
     mlflow.log_metric("std", np.std(scores))
     
-    # fn=model_input
-    # cn=model_output
-    # fig, axes = plt.subplots(nrows = 1,ncols = 1,figsize = (4,4), dpi=800)
-    # tree.plot_tree(rfr_model.estimators_[0],
-    #             feature_names = fn, 
-    #             class_names=cn,
-    #             filled = True);
-    # plot
+    
     plt.title("Random Forest Regression: KFold(n_split="+str(n_splits)+")")
     plt.bar(range(len(scores)), scores)
-    plt.savefig(input_dir_train+ "rf_regressor/"+file_analysis_train.replace(".csv",'.png')) 
+    plt.savefig(result_dir+"rf_regressor_"+name_place)  
     name_model = "model_rf_regressor_"+file_analysis_train.replace(".csv","")
     
     # SCHEMA MODEL MLFlow               
@@ -197,6 +192,25 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
 def load_data( path, n_rows, fields=None):
     dataframe = collect.Collections.readCSV(path,n_rows,fields)
     return dataframe
-   
+
+def logs (path,filename,scores,mean,std):
+    # import ipdb; ipdb.set_trace()
+    print(filename)
+    FILENAME =  path + filename
+    f = open(FILENAME,"w+")
+    
+    str_display = display_scores(np.sqrt(scores)) 
+    for idx in range(len(scores)):
+        f.write("\n scores "+str(idx) + ": " + str(scores[idx]) )
+
+    f.write("\nMean: " +  str(np.mean(scores)))
+    f.write("\nStd: "  +  str(np.std(scores)))
+    f.write("\nDisplay Scores: " + str_display)
+    
+    f.close()
+
+def display_scores(scores):
+    return "Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores))
+
 if __name__ == '__main__':
     RandomForest()

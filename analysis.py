@@ -134,28 +134,20 @@ def create_csv( dataframe, path, name):
 def logs (df,path,filename):
     # import ipdb; ipdb.set_trace()
     print(filename)
-    LOG_FILENAME =  path + "/analysis/data/logs/"+filename+".logs"
-
-    # Set up a specific logger with our desired output level
-    my_logger = logging.getLogger('MyLogger')
-    my_logger.setLevel(logging.INFO)
-
-    # Add the log message handler to the logger
-    handler = logging.FileHandler(
-        LOG_FILENAME, mode='w'
-    )
-    my_logger.addHandler(handler)
-    # logging.basicConfig(filename=log_file, level=logging.INFO)
-    my_logger.info("\n\nMedia ---- \n"      + str(df['Mean'])    )
-    my_logger.info("\n\nMediana ---- \n"    + str(df['Median'])  )
-    my_logger.info("\n\nStd ---- \n"        + str(df['Std'])     )
-    my_logger.info("\n\nQ1 ---- \n"         + str(df['Q1'])      )
-    my_logger.info("\n\nQ2 ---- \n"         + str(df['Q2'])      )
-    my_logger.info("\n\nQ3 ---- \n"         + str(df['Q3'])      )
-    my_logger.info("\n\nMin ---- \n"        + str(df['Min'])     )
-    my_logger.info("\n\nMax ---- \n"        + str(df['Max'])     )
+    FILENAME =  path + "/analysis/data/logs/"+filename+".txt"
     
-    handler.close()
+    f = open(FILENAME,"w+")
+    
+    f.write("\n\nMedia   ---- \n"        + str(df['Mean'])   )
+    f.write("\n\nMediana ---- \n"        + str(df['Median']) )
+    f.write("\n\nStd     ---- \n"        + str(df['Std'])    )
+    f.write("\n\nQ1      ---- \n"        + str(df['Q1'])     )
+    f.write("\n\nQ2      ---- \n"        + str(df['Q2'])     )
+    f.write("\n\nQ3      ---- \n"        + str(df['Q3'])     )
+    f.write("\n\nMin     ---- \n"        + str(df['Min'])    )
+    f.write("\n\nMax     ---- \n"        + str(df['Max'])    )
+    
+    f.close()
 
 if __name__=="__main__":
     Analysis()

@@ -2,5 +2,6 @@ model_input:                air_temperature,cloud_coverage,dew_temperature,preci
 model_output:               meter_reading
 input_dir_train:            Data/ASHRAE/ashrae/results/train/
 input_dir_test:             Data/ASHRAE/ashrae/results/test/
+output_dir:                 Data/ASHRAE/ashrae/results/
 n_splits:                   10
 objective:                  reg:squarederror
