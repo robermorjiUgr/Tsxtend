@@ -51,15 +51,18 @@ def missing_values(n_rows, fields_include, input_dir,elements,alg_missing):
     # Directory input dirs.
     if not os.path.exists(input_dir+ "/missing-values"):
         os.makedirs(input_dir+ "/missing-values")  
-   
+    
+    
+    
     # Lists of Files for analise
     list_file = os.listdir(input_dir)
     list_file = [ l for l in list_file if l.endswith(".csv")]
+    
 
     # Selected particular elements for analise
-    if elements!=None:
-        elements = [ elem for elem in elements.split(",") ]
-        list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
+    # if fields_include!=None:
+    #     fields_include = [ elem for elem in fields_include.split(",") ]
+    #     list_file = [ l for l in list_file for elem in fields_include if l.find(elem)!=-1 ]
     
     # Set Name Run
     mlflow.set_tag("mlflow.runName", "Missing Values")
@@ -68,42 +71,43 @@ def missing_values(n_rows, fields_include, input_dir,elements,alg_missing):
         print("Missing Values: " + str(csv))
         
         # PATH DATA
-        path_data = input_dir + "/" + csv
+        path_data = input_dir + csv
                
         # Selecting of fields
         if fields_include!='None':
-            fields_include = fields_include.split(",")
-            df_origin = load_data(path_data, int(n_rows), fields_include)
+            columns_fields = fields_include.split(",")
+            df_origin = load_data(path_data, int(n_rows), columns_fields)
         else:
             df_origin = load_data(path_data, int(n_rows))
         
         # Create directory algorithms missing values.
-        if not os.path.exists(input_dir+ "/missing-values/"+alg_missing+"/"):
-            os.makedirs(input_dir+ "/missing-values/"+alg_missing+"/")
+        if not os.path.exists(input_dir+ "missing-values/"+alg_missing+"/"):
+            os.makedirs(input_dir+ "missing-values/"+alg_missing+"/")
 
     
         
         if alg_missing == 'visualization':
             # Graphs to comprobate if there is missing values in DataSet
-            if not os.path.exists(input_dir+ "/missing-values/"+alg_missing+"/matrix/"):
-                os.makedirs(input_dir+ "/missing-values/"+alg_missing+"/matrix/")
-            if not os.path.exists(input_dir+ "/missing-values/"+alg_missing+"/bar/"):
-                os.makedirs(input_dir+ "/missing-values/"+alg_missing+"/bar/")
+            if not os.path.exists(input_dir+ "missing-values/"+alg_missing+"/matrix/"):
+                os.makedirs(input_dir+ "missing-values/"+alg_missing+"/matrix/")
+            if not os.path.exists(input_dir+ "missing-values/"+alg_missing+"/bar/"):
+                os.makedirs(input_dir+ "missing-values/"+alg_missing+"/bar/")
 
             if fields_include!='None':
                 # Selecting of fields
-                msno.matrix(df_origin[fields_include])                
-                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/matrix/"+csv.replace(".csv",'')+".png")
+                columns_fields = fields_include.split(",")
+                msno.matrix(df_origin[columns_fields])                
+                plt.savefig(input_dir+ "missing-values/"+alg_missing+"/matrix/"+csv.replace(".csv",'')+".png")
                 
-                msno.bar(df_origin[fields_include])               
-                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/bar/"+csv.replace(".csv",'')+".png")
+                msno.bar(df_origin[columns_fields])               
+                plt.savefig(input_dir+ "missing-values/"+alg_missing+"/bar/"+csv.replace(".csv",'')+".png")
             else:
                 # Completing DataSet
                 msno.matrix(df_origin)
-                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/matrix/"+csv.replace(".csv",'')+".png")
+                plt.savefig(input_dir+ "missing-values/"+alg_missing+"/matrix/"+csv.replace(".csv",'')+".png")
                 
                 msno.bar(df_origin)
-                plt.savefig(input_dir+ "/missing-values/"+alg_missing+"/bar/"+csv.replace(".csv",'')+".png")
+                plt.savefig(input_dir+ "missing-values/"+alg_missing+"/bar/"+csv.replace(".csv",'')+".png")
             
         else:
             # Algorithms missing values
@@ -119,7 +123,7 @@ def missing_values(n_rows, fields_include, input_dir,elements,alg_missing):
             df_final.to_csv(path_data,encoding='utf-8')
      
         # Create Artifacts mlflows
-        mlflow.log_artifacts(input_dir+ "/missing-values")
+        mlflow.log_artifacts(input_dir+ "missing-values/")
         
 def load_data( path, n_rows, fields=None):
     dataframe = collect.Collections.readCSV(path,n_rows,fields)

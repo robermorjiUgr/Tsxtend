@@ -1,6 +1,6 @@
-etl:      analysis
-deepl:    ""
-mlearn:   ""
+etl:      partition-data,missing-values
+deepl:    lstm,cnn,mlp,mlp_headed
+mlearn:   xgb,dtree_regressor,rf_regressor
 n_rows:   100000
 elements: ""
 # input_dir: Data/ASHRAE/ashrae/working-data/train/

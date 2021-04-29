@@ -47,11 +47,12 @@ from  xgboost import DMatrix
 @click.command(help="Dado un fichero CSV, transformar en un artefacto mlflow")
 @click.option("--file_analysis_train", type=str,default=None)
 @click.option("--file_analysis_test", type=str,default=None)
+@click.option("--input_dir_train", type=str,default=None)
+@click.option("--input_dir_test", type=str,default=None)
+@click.option("--output_dir", type=str,default=None)
 @click.option("--artifact_uri", type=str,default=None)
 @click.option("--experiment_id", type=str,default=None)
 @click.option("--run_id", type=str,default=None)
-@click.option("--input_dir_train", type=str,default=None)
-@click.option("--input_dir_test", type=str,default=None)
 @click.option("--n_rows",  default=0.0,  type=float)
 @click.option("--model_input",  type=str, default=None)
 @click.option("--model_output",  type=str, default=None)
@@ -59,10 +60,12 @@ from  xgboost import DMatrix
 @click.option("--objective", type=str, default="reg:squarederror", help="Objective")
 
 def xgboost(file_analysis_train,file_analysis_test,artifact_uri,experiment_id, run_id, input_dir_train,input_dir_test,n_rows,
-model_input,model_output,n_splits, objective ):
+model_input,model_output,n_splits, objective, output_dir ):
     
-    if not os.path.exists(input_dir_train+ "xgboost"):
-        os.makedirs(input_dir_train+ "xgboost")
+    name_place  = file_analysis_train.split(".csv")[0].split("train_")[1]
+    result_dir  = output_dir + name_place +"/xgboost/"
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
 
     
     # for file_analysis in list_file:
@@ -127,6 +130,8 @@ model_input,model_output,n_splits, objective ):
 
     display_scores(np.sqrt(scores))   
 
+    logs(result_dir,"xgb.txt",scores,np.mean(scores),np.std(scores))
+    
 
     
     for idx in range(len(scores)):
@@ -134,13 +139,15 @@ model_input,model_output,n_splits, objective ):
     mlflow.log_metric("mean", np.mean(scores))
     mlflow.log_metric("std", np.std(scores))
 
+
+
     print(xgb_model.feature_importances_)
     
     # PLOT
     plt.title("XGBOOST Regression: KFold(n_split="+str(n_splits)+")")
     plt.bar(range(len(scores)), scores)
     # plt.bar(range(len(xgb_model.feature_importances_)), xgb_model.feature_importances_)
-    plt.savefig(input_dir_train+ "xgboost/"+file_analysis_train.replace(".csv",'.png')) 
+    plt.savefig(result_dir+"xgb_"+name_place) 
     name_model = "model_xgboost_"+file_analysis_train.replace(".csv","")
 
     # SCHEMA MODEL MLFlow           
@@ -164,7 +171,26 @@ model_input,model_output,n_splits, objective ):
         - Results scores format.
 '''
 def display_scores(scores):
-    print("Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores)))
+    return "Scores: {0}\nMean: {1:.3f}\nStd: {2:.3f}".format(scores, np.mean(scores), np.std(scores))
+
+
+def logs (path,filename,scores,mean,std):
+    # import ipdb; ipdb.set_trace()
+   
+   
+    print(filename)
+    FILENAME =  path + filename
+    f = open(FILENAME,"w+")
+    
+    str_display = display_scores(np.sqrt(scores)) 
+    for idx in range(len(scores)):
+        f.write("\n scores "+str(idx) + ": " + str(scores[idx]) )
+
+    f.write("\nMean: " +  str(np.mean(scores)))
+    f.write("\nStd: "  +  str(np.std(scores)))
+    f.write("\nDisplay Scores: " + str_display)
+    
+    f.close()
 
 def load_data( path, n_rows, fields=None):
     dataframe = collect.Collections.readCSV(path,n_rows,fields)

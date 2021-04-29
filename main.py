@@ -169,10 +169,9 @@ def workflow():
                 # Parameters get from YAML file [ main, analysis ]
                 parameters = {
                     "n_rows":       n_rows,
-                    # "elements":     elements,
                     "fields":       parsed_yaml_file['fields'],
                     "input_dir":    parsed_yaml_file['input_dir'],
-                    "output_dir":    parsed_yaml_file['output_dir'],
+                    "output_dir":   parsed_yaml_file['output_dir'],
                 }
                 
                 analysis = _get_or_run("analysis_data",parameters)
@@ -221,7 +220,7 @@ def workflow():
                 parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
                 print(parsed_yaml_file)
                 parameters={
-                    "elements":         elements,
+                    # "elements":         elements,
                     "n_rows":           n_rows,
                     "fields_include":   parsed_yaml_file['fields_include'], 
                     "alg_missing":      parsed_yaml_file['alg_missing'],
@@ -272,66 +271,67 @@ def workflow():
                 }
                 feature_fs = _get_or_run("feature_selection", parameters=parameters)
                 
-
-            
-        
         if mlearn:
             '''
               Algorithms Machine Learning
             '''
-            list_file_train = os.listdir(main_yaml_file['input_dir_train'])
-            list_file_test  = os.listdir(main_yaml_file['input_dir_test'])
             
-            list_file_train = [ l for l in list_file_train if l.endswith(".csv") ]
-            list_file_test  =  [ l for l in list_file_test if l.endswith(".csv") ]
-            # Lists of Files for analise
-            # list_file = os.listdir(main_yaml_file['input_dir'])
-            # list_file = [ l for l in list_file if l.endswith(".csv")]
+            mlearn = mlearn.split(",")
+            for item in mlearn:
+                '''
+                    XGBOOST:
+                    Algorithms xgboost 
+                '''
+                if item=="xgb":
+                    a_yaml_file = open("Config/xgb.yaml")
+                    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
 
-            # # Selected particular elements for analise
-            # if elements!=None:
-            #     elements = [ elem for elem in elements.split(",") ]
-            #     list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
-
-            for csv in list_file_train:
-               
-                # Create  machine learning algorithms list.
-                # Possibility to launch several machine learning algorithms at once through the main.yaml configuration file.
-                file_analysis_test = csv.replace("train_","test_")
-                csv_test = file_analysis_test
-                machine_learn_ = mlearn.split(",")
-                if file_analysis_test in list_file_test:
-                    for item in machine_learn_:
-                        '''
-                        XGBOOST:
-                            Algorithms xgboost 
-                        '''
-                        if item=="xgb":
-                            a_yaml_file = open("Config/xgb.yaml")
-                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                    list_file_train = os.listdir(parsed_yaml_file['input_dir_train'])
+                    list_file_test  = os.listdir(parsed_yaml_file['input_dir_test'])
+                
+                    list_file_train =  [ l for l in list_file_train if l.endswith(".csv") ]
+                    list_file_test  =  [ l for l in list_file_test  if l.endswith(".csv") ]
+                    
+                    for csv in list_file_train:
+                        file_analysis_test = csv.replace("train_","test_")
+                        csv_test = file_analysis_test
+                        if file_analysis_test in list_file_test:
                             print(parsed_yaml_file)
                             parameters = {
                                 "file_analysis_train":  csv,
                                 "file_analysis_test":   csv_test,
+                                "input_dir_train":      parsed_yaml_file['input_dir_train'],
+                                "input_dir_test":       parsed_yaml_file['input_dir_test'],
+                                "output_dir":           parsed_yaml_file['output_dir'],
                                 "artifact_uri":         active_run.info.artifact_uri,
                                 "experiment_id":        active_run.info.experiment_id,
                                 "run_id":               active_run.info.run_id,
                                 "n_rows":               n_rows,
-                                "input_dir_train":      parsed_yaml_file['input_dir_train'],
-                                "input_dir_test":       parsed_yaml_file['input_dir_test'],
                                 "model_input":          parsed_yaml_file['model_input'], 
                                 "model_output":         parsed_yaml_file['model_output'], 
                                 "n_splits":             parsed_yaml_file['n_splits'],
                                 "objective":            parsed_yaml_file['objective']
                             }
                             xgboost = _get_or_run("xgb", parameters=parameters) 
-                        '''
-                        RANDOM FOREST REGRESSOR:
-                            Algorithms random forest regressor. 
-                        '''
-                        if item=="rf_regressor":
-                            a_yaml_file = open("Config/rf_regression.yaml")
-                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+
+                '''
+                RANDOM FOREST REGRESSOR:
+                    Algorithms random forest regressor. 
+                '''
+                if item=="rf_regressor":
+                    a_yaml_file = open("Config/rf_regression.yaml")
+                    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                    
+                    list_file_train = os.listdir(parsed_yaml_file['input_dir_train'])
+                    list_file_test  = os.listdir(parsed_yaml_file['input_dir_test'])
+                
+                    list_file_train =  [ l for l in list_file_train if l.endswith(".csv") ]
+                    list_file_test  =  [ l for l in list_file_test  if l.endswith(".csv") ]
+                    
+                    for csv in list_file_train:
+                        file_analysis_test = csv.replace("train_","test_")
+                        csv_test = file_analysis_test
+                        if file_analysis_test in list_file_test:
                             print(parsed_yaml_file)
                             parameters ={
                                 "file_analysis_train":          csv,
@@ -342,6 +342,7 @@ def workflow():
                                 "n_rows":                       n_rows,
                                 "input_dir_train":              parsed_yaml_file['input_dir_train'],
                                 "input_dir_test":               parsed_yaml_file['input_dir_test'],
+                                "output_dir":                   parsed_yaml_file['output_dir'],
                                 "model_input":                  parsed_yaml_file['model_input'], 
                                 "model_output":                 parsed_yaml_file['model_output'], 
                                 "n_estimators":                 parsed_yaml_file['n_estimators'],
@@ -365,14 +366,24 @@ def workflow():
                                 "n_splits":                    parsed_yaml_file['n_splits'],
                             }
                             rf_regressor = _get_or_run("rf_regressor", parameters=parameters) 
-                        '''
-                        DTREE REGRESSOR:
-                            Algorithms DTREE regressor. 
-                        '''
-                        if item=="dtree_regressor":
-                            a_yaml_file = open("Config/dtree_regression.yaml")
-                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                            print(parsed_yaml_file)
+                '''
+                DTREE REGRESSOR:
+                    Algorithms DTREE regressor. 
+                '''
+                if item=="dtree_regressor":
+                    a_yaml_file = open("Config/dtree_regression.yaml")
+                    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                    
+                    list_file_train = os.listdir(parsed_yaml_file['input_dir_train'])
+                    list_file_test  = os.listdir(parsed_yaml_file['input_dir_test'])
+                
+                    list_file_train =  [ l for l in list_file_train if l.endswith(".csv") ]
+                    list_file_test  =  [ l for l in list_file_test  if l.endswith(".csv") ]
+                    
+                    for csv in list_file_train:
+                        file_analysis_test = csv.replace("train_","test_")
+                        csv_test = file_analysis_test
+                        if file_analysis_test in list_file_test:
                             # import ipdb; ipdb.set_trace()
                             parameters ={
                                 "file_analysis_train":  csv,
@@ -384,6 +395,7 @@ def workflow():
                                 "n_splits":                  parsed_yaml_file['n_splits'],
                                 "input_dir_train":           parsed_yaml_file['input_dir_train'],
                                 "input_dir_test":            parsed_yaml_file['input_dir_test'],
+                                "output_dir":                parsed_yaml_file['output_dir'],
                                 "model_input":               parsed_yaml_file['model_input'], 
                                 "model_output":              parsed_yaml_file['model_output'],  
                                 "max_depth":                 parsed_yaml_file['max_depth'],
@@ -398,70 +410,41 @@ def workflow():
                                 "figure":                    parsed_yaml_file['figure'],
                             }
                             dtree_regressor = _get_or_run("dtree_regressor", parameters=parameters) 
-                        if item=="catboost":
-                            # import ipdb; ipdb.set_trace()
-                            parameters ={
-                                "file_analysis":csv,
-                                "artifact_uri":active_run.info.artifact_uri,
-                                "experiment_id":active_run.info.experiment_id,
-                                "run_id":active_run.info.run_id,
-                                "output_dir": output_dir,
-                                "fields_include":fields_include, 
-                                "fields_exclude":fields_exclude,
-                                "elements": elements,
-                                "n_rows":n_rows,
-                                "loss_function":loss_function,
-                                "eval_metric":eval_metric,
-                                "task_type":task_type,
-                                "learning_rate":learning_rate,
-                                "iterations":iterations,
-                                "l2_leaf_reg":l2_leaf_reg,
-                                "random_seed":random_seed,
-                                "od_type":od_type,
-                                "depth":depth, 
-                                "early_stopping_rounds":early_stopping_rounds,
-                                "border_count":border_count,
-                                "figure":figure,
-                            }
-                            catboost = _get_or_run("catboost", parameters=parameters) 
+            
                         
         if deepl:
             # import ipdb; ipdb.set_trace();
-         
-            list_file_train = os.listdir(main_yaml_file['input_dir_train'])
-            list_file_test  = os.listdir(main_yaml_file['input_dir_test'])
-            
-            list_file_train = [ l for l in list_file_train if l.endswith(".csv") ]
-            list_file_test  =  [ l for l in list_file_test if l.endswith(".csv") ]
-            
-                        
-            for csv in list_file_train:
-                # Create  machine learning algorithms list.
-                # Possibility to launch several machine learning algorithms at once through the main.yaml configuration file.
-                file_analysis_test = csv.replace("train_","test_")
-                if file_analysis_test in list_file_test:
-                    # import ipdb; ipdb.set_trace();
-                    csv_test = file_analysis_test
-                    deepl_ = deepl.split(",")
-                    for item in deepl_:
-                        '''
-                        CNN:
-                            Algorithms CNN. 
-                        '''
-                        if item=="cnn":
-                            a_yaml_file = open("Config/cnn.yaml")
-                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                            print(parsed_yaml_file)
+            # import ipdb; ipdb.set_trace();
+            deepl = deepl.split(",")
+            for item in deepl:
+                '''
+                CNN:
+                    Algorithms CNN. 
+                '''
+                if item=="cnn":
+                    a_yaml_file = open("Config/cnn.yaml")
+                    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+
+                    list_file_train = os.listdir(parsed_yaml_file['input_dir_train'])
+                    list_file_test  = os.listdir(parsed_yaml_file['input_dir_test'])
+                
+                    list_file_train =  [ l for l in list_file_train if l.endswith(".csv") ]
+                    list_file_test  =  [ l for l in list_file_test  if l.endswith(".csv") ]
+
+                    for csv in list_file_train:
+                        file_analysis_test = csv.replace("train_","test_")
+                        csv_test = file_analysis_test
+                        if file_analysis_test in list_file_test:
                             parameters = {
                                 "file_analysis_train":  csv,
                                 "file_analysis_test":   csv_test,
                                 "artifact_uri":         active_run.info.artifact_uri,
                                 "experiment_id":        active_run.info.experiment_id,
                                 "run_id":               active_run.info.run_id,
-                                "elements":             elements,
                                 "n_rows":               n_rows,
-                                "input_dir_train":  parsed_yaml_file['input_dir_train'],
-                                "input_dir_test":   parsed_yaml_file['input_dir_test'],
+                                "input_dir_train":      parsed_yaml_file['input_dir_train'],
+                                "input_dir_test":       parsed_yaml_file['input_dir_test'],
+                                "output_dir":           parsed_yaml_file['output_dir'],
                                 "model_input":          parsed_yaml_file['model_input'], 
                                 "model_output":         parsed_yaml_file['model_output'], 
                                 "n_steps":              parsed_yaml_file['n_steps'],
@@ -476,15 +459,24 @@ def workflow():
                             } 
                             
                             cnn = _get_or_run("cnn", parameters=parameters)  
-                        '''
-                        LSTM:
-                            Algorithms LSTM. 
-                        '''
-                        if item=="lstm":
-                            
-                            a_yaml_file = open("Config/lstm.yaml")
-                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                            print(parsed_yaml_file)
+                '''
+                LSTM:
+                    Algorithms LSTM. 
+                '''
+                if item=="lstm":
+                    a_yaml_file = open("Config/lstm.yaml")
+                    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                    print(parsed_yaml_file)
+
+                    list_file_train = os.listdir(parsed_yaml_file['input_dir_train'])
+                    list_file_test  = os.listdir(parsed_yaml_file['input_dir_test'])
+                
+                    list_file_train =  [ l for l in list_file_train if l.endswith(".csv") ]
+                    list_file_test  =  [ l for l in list_file_test  if l.endswith(".csv") ]
+                    for csv in list_file_train:
+                        file_analysis_test = csv.replace("train_","test_")
+                        csv_test = file_analysis_test
+                        if file_analysis_test in list_file_test:
                             parameters = {
                                 "file_analysis_train":  csv,
                                 "file_analysis_test":   csv_test,
@@ -494,6 +486,7 @@ def workflow():
                                 "n_rows":           n_rows,
                                 "input_dir_train":  parsed_yaml_file['input_dir_train'],
                                 "input_dir_test":   parsed_yaml_file['input_dir_test'],
+                                "output_dir":       parsed_yaml_file['output_dir'],
                                 "model_input":      parsed_yaml_file['model_input'], 
                                 "model_output":     parsed_yaml_file['model_output'], 
                                 "n_steps":          parsed_yaml_file['n_steps'],
@@ -504,15 +497,27 @@ def workflow():
                             } 
                             
                             lstm = _get_or_run("lstm", parameters=parameters)  
-                        '''
-                        MLP:
-                            Algorithms MLP. 
-                        '''
-                        if item=="mlp":
-                            
-                            a_yaml_file = open("Config/mlp.yaml")
-                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                            print(parsed_yaml_file)
+                '''
+                MLP:
+                    Algorithms MLP. 
+                '''
+                if item=="mlp":
+                    
+                    a_yaml_file = open("Config/mlp.yaml")
+                    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                    print(parsed_yaml_file)
+                    
+                    list_file_train = os.listdir(parsed_yaml_file['input_dir_train'])
+                    list_file_test  = os.listdir(parsed_yaml_file['input_dir_test'])
+                
+                    list_file_train =  [ l for l in list_file_train if l.endswith(".csv") ]
+                    list_file_test  =  [ l for l in list_file_test  if l.endswith(".csv") ]
+                    
+                    for csv in list_file_train:
+                        file_analysis_test = csv.replace("train_","test_")
+                        csv_test = file_analysis_test
+                        if file_analysis_test in list_file_test:
+                    
                             parameters = {
                                 "file_analysis_train":  csv,
                                 "file_analysis_test":   csv_test,
@@ -522,6 +527,7 @@ def workflow():
                                 "n_rows":           n_rows,
                                 "input_dir_train":  parsed_yaml_file['input_dir_train'],
                                 "input_dir_test":   parsed_yaml_file['input_dir_test'],
+                                "output_dir":       parsed_yaml_file['output_dir'],
                                 "model_input":      parsed_yaml_file['model_input'], 
                                 "model_output":     parsed_yaml_file['model_output'], 
                                 "n_steps":          parsed_yaml_file['n_steps'],
@@ -530,16 +536,27 @@ def workflow():
                                 "batch_size":       parsed_yaml_file['batch_size'],
                                 "verbose":          parsed_yaml_file['verbose'],
                             } 
-                            
+                    
                             mlp = _get_or_run("mlp", parameters=parameters)  
-                        '''
-                        MLP_HEADED:
-                            Algorithms MLP_HEADED. 
-                        '''
-                        if item=="mlp_headed":
-                            a_yaml_file = open("Config/mlp_headed.yaml")
-                            parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-                            print(parsed_yaml_file)
+                '''
+                MLP_HEADED:
+                    Algorithms MLP_HEADED. 
+                '''
+                if item=="mlp_headed":
+                    a_yaml_file = open("Config/mlp_headed.yaml")
+                    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+                    print(parsed_yaml_file)
+                    
+                    list_file_train = os.listdir(parsed_yaml_file['input_dir_train'])
+                    list_file_test  = os.listdir(parsed_yaml_file['input_dir_test'])
+                
+                    list_file_train =  [ l for l in list_file_train if l.endswith(".csv") ]
+                    list_file_test  =  [ l for l in list_file_test  if l.endswith(".csv") ]
+                    
+                    for csv in list_file_train:
+                        file_analysis_test = csv.replace("train_","test_")
+                        csv_test = file_analysis_test
+                        if file_analysis_test in list_file_test:
                             parameters = {
                                 "file_analysis_train":  csv,
                                 "file_analysis_test":   csv_test,
@@ -549,6 +566,7 @@ def workflow():
                                 "n_rows":           n_rows,
                                 "input_dir_train":  parsed_yaml_file['input_dir_train'],
                                 "input_dir_test":   parsed_yaml_file['input_dir_test'],
+                                "output_dir":       parsed_yaml_file['output_dir'],
                                 "model_input":      parsed_yaml_file['model_input'], 
                                 "model_output":     parsed_yaml_file['model_output'], 
                                 "n_steps":          parsed_yaml_file['n_steps'],
@@ -558,7 +576,7 @@ def workflow():
                                 "verbose":          parsed_yaml_file['verbose'],
                             } 
                             mlp_headed = _get_or_run("mlp_headed", parameters=parameters)  
-                
+                        
                     
         # if output_dir!=None:
         #     mlflow.log_artifacts(output_dir)

@@ -74,10 +74,14 @@ entry_points:
       objective: {type:str, default="reg:squarederror"}
       model_input: {type:str, default=None}
       model_output: {type:str, default=None}
-
+      input_dir_train: {type:str, default=None}
+      input_dir_test: {type:str, default=None}
+      output_dir: {type:str, default=None}
+      
     command: 
       "python3 xgb.py --n_splits {n_splits} --objective {objective}
-       --model_input {model_input} --model_output {model_output}"
+       --model_input {model_input} --model_output {model_output} --input_dir_train {input_dir_train}
+       --input_dir_test {input_dir_test} --output_dir {output_dir}"
 
   rf_regressor:
     parameters:
