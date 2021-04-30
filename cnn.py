@@ -146,6 +146,12 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     # import ipdb;ipdb.set_trace();
     name_model = "model_cnn_"+file_analysis_train.replace(".csv","")
     
+    plt.plot(test_y,label="Actual")
+    plt.plot(test_predict,label="Prection")
+    plt.legend()
+    plt.savefig(result_dir+"cnn_"+name_place)
+    plt.close()
+
     # SCHEMA MODEL MLFlow    
     _list_input_schema  = model_input[:-1]
     _list_output_schema = model_output.split(',')

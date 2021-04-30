@@ -146,7 +146,7 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
                                     n_jobs=n_jobs, random_state=random_state,
                                     verbose=verbose, max_samples=None, warm_start=warm_start,
                                     ccp_alpha=ccp_alpha)
-
+    idx = 1
     for train_index, test_index in kfold.split(X):   
         X_train, X_test = X[train_index], test_X[test_index]
         y_train, y_test = y[train_index], test_y[test_index]
@@ -155,6 +155,12 @@ random_state, verbose, warm_start, ccp_alpha, max_samples, figure,n_splits):
         y_pred = rfr_model.predict(X_test)       
     
         scores.append(mean_squared_error(y_test, y_pred))
+        plt.plot(y_test,label="Actual")
+        plt.plot(y_pred,label="Prection")
+        plt.legend()
+        plt.savefig(result_dir+"rf_regressor_"+name_place+"_split_"+str(idx))
+        plt.close()
+        idx += 1
         # scores.append(mean_absolute_error(y_test,y_pred))
     
     
