@@ -155,6 +155,13 @@ n_steps,epochs,hidden_units,batch_size,verbose,output_dir):
     test_predict = model.predict(list_test_X,verbose=0)
     (rmse, mse, mae, r2) = eval_metrics(test_y, test_predict)
     
+        
+    plt.plot(test_y,label="Actual")
+    plt.plot(test_predict,label="Prection")
+    plt.legend()
+    plt.savefig(result_dir+"mlp_headed_"+name_place)
+    plt.close()
+
     name_model = "model_mlp_headed_"+file_analysis_train.replace(".csv","")
     
     _list_input_schema  = model_input

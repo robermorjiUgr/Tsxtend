@@ -144,6 +144,12 @@ n_steps,epochs,hidden_units,batch_size,verbose,output_dir):
     (rmse, mae, mse, r2) = eval_metrics(test_y, test_predict)
     print(rmse, mae, mse, r2)
     
+    plt.plot(test_y,label="Actual")
+    plt.plot(test_predict,label="Prection")
+    plt.legend()
+    plt.savefig(result_dir+"lstm_"+name_place)
+    plt.close()
+    
     name_model = "model_lstm_"+file_analysis_train.replace(".csv","")
     
     # SCHEMA MODEL MLFlow  

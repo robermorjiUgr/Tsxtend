@@ -117,6 +117,7 @@ model_input,model_output,n_splits, objective, output_dir ):
     scores=[]
     xgb_model = xgb.XGBRegressor(objective=objective,verbosity=1)
 
+    idx = 1
     for train_index, test_index in kfold.split(X):   
         X_train, X_test = X[train_index], test_X[test_index]
         y_train, y_test = y[train_index], test_y[test_index]
@@ -124,11 +125,18 @@ model_input,model_output,n_splits, objective, output_dir ):
         
         xgb_model.fit(X_train, y_train)
         y_pred = xgb_model.predict(X_test)
-        
         scores.append(mean_squared_error(y_test, y_pred))
+        plt.plot(y_test,label="Actual")
+        plt.plot(y_pred,label="Prection")
+        plt.legend()
+        plt.savefig(result_dir+"xgb_"+name_place+"_split_"+str(idx))
+        plt.close()
+        idx += 1 
+
         # scores.append(mean_absolute_error(y_test,y_pred))
 
     display_scores(np.sqrt(scores))   
+    import ipdb;ipdb.set_trace();
 
     logs(result_dir,"xgb.txt",scores,np.mean(scores),np.std(scores))
     

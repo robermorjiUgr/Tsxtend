@@ -133,6 +133,7 @@ max_leaf_nodes, figure, n_splits,output_dir):
                                      min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features,
                                      random_state=random_state, max_leaf_nodes=max_leaf_nodes)
 
+    idx = 1
     for train_index, test_index in kfold.split(X):   
         X_train, X_test = X[train_index], test_X[test_index]
         y_train, y_test = y[train_index], test_y[test_index]
@@ -141,6 +142,12 @@ max_leaf_nodes, figure, n_splits,output_dir):
         y_pred = dtree_model.predict(X_test)
 
         scores.append(mean_squared_error(y_test, y_pred))
+        plt.plot(y_test,label="Actual")
+        plt.plot(y_pred,label="Prection")
+        plt.legend()
+        plt.savefig(result_dir+"dtree_regressor_"+name_place+"_split_"+str(idx))
+        plt.close()
+        idx += 1
         # scores.append(mean_absolute_error(y_test,y_pred))
     
     display_scores(np.sqrt(scores))
