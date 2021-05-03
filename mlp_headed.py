@@ -188,7 +188,7 @@ n_steps,epochs,hidden_units,batch_size,verbose,output_dir):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train loss', 'validate loss','mae','val_mae','mse','val_mse'], loc='upper left')
-    plt.savefig(result_dir+"mlp_headed_"+name_place)
+    plt.savefig(result_dir+"mlp_headed_metrics_"+name_place)
 
      
     mlflow.log_artifact(result_dir+"mlp_headed_"+name_place+".png")

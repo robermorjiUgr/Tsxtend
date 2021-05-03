@@ -182,7 +182,7 @@ conv_filters, conv_kernel_size, pool_size,epochs,hidden_units,batch_size,verbose
     plt.savefig(result_dir+"cnn_"+name_place)
 
      
-    mlflow.log_artifact(result_dir+"cnn_"+name_place+".png")
+    mlflow.log_artifact(result_dir+"cnn__metrics_"+name_place+".png")
 
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("mae", mae)
