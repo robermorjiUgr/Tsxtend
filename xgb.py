@@ -136,7 +136,7 @@ model_input,model_output,n_splits, objective, output_dir ):
         # scores.append(mean_absolute_error(y_test,y_pred))
 
     display_scores(np.sqrt(scores))   
-    import ipdb;ipdb.set_trace();
+    
 
     logs(result_dir,"xgb.txt",scores,np.mean(scores),np.std(scores))
     
