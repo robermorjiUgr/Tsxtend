@@ -1,4 +1,4 @@
-model_input:                air_temperature,wind_speed,dew_temperature
+model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_direction,wind_speed
 model_output:               meter_reading
 input_dir_train:            Data/ASHRAE/ashrae/results/train/
 input_dir_test:             Data/ASHRAE/ashrae/results/test/

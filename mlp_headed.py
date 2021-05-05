@@ -191,7 +191,7 @@ n_steps,epochs,hidden_units,batch_size,verbose,output_dir):
     plt.savefig(result_dir+"mlp_headed_metrics_"+name_place)
 
      
-    mlflow.log_artifact(result_dir+"mlp_headed_"+name_place+".png")
+    #mlflow.log_artifact(result_dir+"mlp_headed_"+name_place+".png")
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("mae", mae)
     mlflow.log_metric("mse", mse)
