@@ -180,7 +180,7 @@ n_steps,epochs,hidden_units,batch_size,verbose,output_dir):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train loss', 'validate loss','mae','val_mae'], loc='upper left')
-    plt.savefig(result_dir+"lstm_"+name_place)
+    plt.savefig(result_dir+"lstm__metrics_"+name_place)
 
     # import ipdb;ipdb.set_trace();
     #mlflow.log_artifact(result_dir+"lstm__metrics_"+name_place+".png")
