@@ -1,8 +1,8 @@
-model_input:                air_temperature,cloud_coverage,dew_temperature,precip_depth_1_hr,sea_level_pressure,wind_direction,wind_speed
-model_output:               meter_reading
-input_dir_train:            Data/ASHRAE/ashrae/results/train/
-input_dir_test:             Data/ASHRAE/ashrae/results/test/
-output_dir:                 Data/ASHRAE/ashrae/results/
+model_input:                per_F_Sector ,per_traffic ,per_B1 ,per_B2 ,per_B3 ,per_T_Reg ,per_Resto
+model_output:               TOrders
+input_dir_train:            Data/DAILY_FORECASTING/train/
+input_dir_test:             Data/DAILY_FORECASTING/test/
+output_dir:                 Data/DAILY_FORECASTING/result/rf_regression/
 n_estimators:               100
 criterion:                  mse
 max_depth:                  5

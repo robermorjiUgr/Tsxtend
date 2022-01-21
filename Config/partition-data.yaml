@@ -2,7 +2,7 @@ date_init: None
 date_end:  None
 fields_include: None
 #path_data: Data/ASHRAE/ashrae/working-data/train.csv
-group_by_parent: site_id,meter
-type_dataset: test
-file_input: Data/ASHRAE/ashrae/working-data/test_new.csv
-output_dir: Data/ASHRAE/ashrae/results/test/
+group_by_parent: SystemCodeNumber
+type_dataset: train
+file_input: Data/PARKING/working-data/parking.csv
+output_dir: Data/PARKING/result/train/
