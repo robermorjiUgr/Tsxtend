@@ -40,7 +40,7 @@ import plotly.io as pio
 @click.option("--n_rows", type=float, default=0, help="número de filas a extraer, 0 extrae todo")
 @click.option("--fields_include", type=str, default=None, help="Incluir los siguientes campos")
 @click.option("--input_dir", type=str,default="output/")
-# @click.option("--elements", type=str, default=None)
+@click.option("--elements", type=str, default=None)
 @click.option("--alg_fs", type=str, default="FSMeasures", help="algoritmo seleccion de características")
 def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
     
@@ -54,10 +54,10 @@ def feature_selection( n_rows,fields_include,input_dir, elements,alg_fs):
     list_file = os.listdir(input_dir)
     list_file = [ l for l in list_file if l.endswith(".csv")]
     
-    # # Selected particular elements for analise
-    # if elements!=None:
-    #     elements = [ elem for elem in elements.split(",") ]
-    #     list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
+    # Selected particular elements for analise
+    #if elements!=None:
+    #    elements = [ elem for elem in elements.split(",") ]
+    #    list_file = [ l for l in list_file for elem in elements if l.find(elem)!=-1 ]
 
     if fields_include!='None':
         fields_include = fields_include.split(",")

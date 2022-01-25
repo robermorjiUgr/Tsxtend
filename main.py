@@ -264,7 +264,7 @@ def workflow():
                 print(parsed_yaml_file)
                 parameters = {
                     "n_rows":           n_rows,
-                    "elements":         elements,
+                    # "elements":         elements,
                     "fields_include":   parsed_yaml_file['fields_include'], 
                     "alg_fs":           parsed_yaml_file['alg_fs'],
                     "input_dir":        parsed_yaml_file['input_dir'],

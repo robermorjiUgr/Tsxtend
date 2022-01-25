@@ -3,8 +3,12 @@ mlruns/
 *.csv
 Data/
 JupyterNoteBook/
-.*
+
+
+
+Config/
 Config/*.yaml
 # Provisionalmente porque todavía no está acabado
 cboost.py
 *.ipynb
+
