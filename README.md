@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # TSxtend
 ## Introduction
 
@@ -80,4 +79,3 @@ mlflow ui
 =======
 # Tsxtend
 Repository TSxtend
->>>>>>> 815da001ee2cb2ba15e7002c94c44e483ffdaadb
