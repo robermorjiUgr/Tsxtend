@@ -1,9 +1,5 @@
-etl:      ""
-deepl:    cnn,lstm,mlp,mlp_headed
+etl:      partition-data
+deepl:    ""
 mlearn:   ""
-n_rows:   100
+n_rows:   0.0
 elements: ""
-# input_dir: Data/ASHRAE/ashrae/working-data/train/
-# output_dir: Data/ASHRAE/ashrae/results/
-# input_dir_train: Data/ASHRAE/ashrae/results/train/
-# input_dir_test: Data/ASHRAE/ashrae/results/test/
