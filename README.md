@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TSxtend
 ## Introduction
 
@@ -76,3 +77,7 @@ mlflow ui
 
 #### CONDA 
 [link installation anaconda ](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages)
+=======
+# Tsxtend
+Repository TSxtend
+>>>>>>> 815da001ee2cb2ba15e7002c94c44e483ffdaadb
