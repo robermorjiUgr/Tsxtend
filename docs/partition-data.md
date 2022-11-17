@@ -30,15 +30,15 @@ def PartitionDF(date_init, date_end, path_data, n_rows,fields_include,group_by_p
         mlearn:   ""
         n_rows:   0.0
         elements: ""
-        output_dir: Data/test_icpe_v2
+        output_dir: Data/train_ashrae
 
     partition-data.yaml
         date_init: 2016-01-01 00:00:00
         date_end:  2016-12-31 00:00:00
         fields_include: None
         path_data: train.csv
-        group_by_parent: meter,site_id
-        output_dir: Data/test_icpe_v2
+        group_by_parent: meter,site_id,building_id
+        output_dir: Data/train_ashrae
     ~~~
 
 Selection date init  and date end in order to that the algorithms split origin dataset. If selection fields include split only realice with this fields selections. Path_data will be the path where get DataSet split. Group_by_parent is params very important, because,it groups the dataset in several levels.
