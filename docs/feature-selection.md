@@ -70,57 +70,57 @@ It is important in this step, the fields_include parameter, because , some field
   <tbody>
     <tr>
       <th>meter_reading</th>
-      <td>226.254001</td>
-      <td>376.548705</td>
-      <td>141788.927366</td>
-      <td>6.445614</td>
-      <td>5.677824e+08</td>
-      <td>89.447439</td>
+      <td>226.25</td>
+      <td>376.54</td>
+      <td>141788.92</td>
+      <td>6.44</td>
+      <td>5.67+08</td>
+      <td>89.44</td>
     </tr>
     <tr>
       <th>air_temperature</th>
-      <td>22.864378</td>
-      <td>6.009380</td>
-      <td>36.112648</td>
-      <td>3.769795</td>
-      <td>1.430987e+06</td>
-      <td>1.120325</td>
+      <td>22.86</td>
+      <td>6.01</td>
+      <td>36.11</td>
+      <td>3.76</td>
+      <td>1.43e+06</td>
+      <td>1.12</td>
     </tr>
     <tr>
       <th>dew_temperature</th>
-      <td>16.858351</td>
-      <td>6.482163</td>
-      <td>42.018435</td>
-      <td>3.645617</td>
-      <td>2.258191e+06</td>
-      <td>1.813055</td>
+      <td>16.85</td>
+      <td>6.48</td>
+      <td>42.01</td>
+      <td>3.64</td>
+      <td>2.25+06</td>
+      <td>1.81</td>
     </tr>
     <tr>
       <th>precip_depth_1_hr</th>
-      <td>1.385327</td>
-      <td>12.971028</td>
-      <td>168.247563</td>
-      <td>0.526576</td>
-      <td>1.100354e+08</td>
-      <td>2.291894</td>
+      <td>1.38</td>
+      <td>12.97</td>
+      <td>168.24</td>
+      <td>0.52</td>
+      <td>1.10e+08</td>
+      <td>2.29</td>
     </tr>
     <tr>
       <th>sea_level_pressure</th>
-      <td>1017.958715</td>
-      <td>4.030233</td>
-      <td>16.242775</td>
-      <td>5.158649</td>
-      <td>1.445659e+04</td>
-      <td>1.000016</td>
+      <td>1017.95</td>
+      <td>4.03</td>
+      <td>16.24</td>
+      <td>5.15</td>
+      <td>1.44e+04</td>
+      <td>1.03</td>
     </tr>
     <tr>
       <th>wind_speed</th>
-      <td>3.377040</td>
-      <td>2.155811</td>
-      <td>4.647522</td>
-      <td>2.599795</td>
-      <td>1.246870e+06</td>
-      <td>1.421584</td>
+      <td>3.37</td>
+      <td>2.15</td>
+      <td>4.64</td>
+      <td>2.59</td>
+      <td>1.24e+06</td>
+      <td>1.42</td>
     </tr>
   </tbody>
 </table>
