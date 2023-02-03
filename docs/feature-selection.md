@@ -72,9 +72,9 @@ It is important in this step, the fields_include parameter, because , some field
       <th>meter_reading</th>
       <td>226.25</td>
       <td>376.54</td>
-      <td>141788.92</td>
+      <td>141,788.92</td>
       <td>6.44</td>
-      <td>5.67+08</td>
+      <td>5.67*10^8</td>
       <td>89.44</td>
     </tr>
     <tr>
@@ -83,7 +83,7 @@ It is important in this step, the fields_include parameter, because , some field
       <td>6.01</td>
       <td>36.11</td>
       <td>3.76</td>
-      <td>1.43e+06</td>
+      <td>1.43*10^6</td>
       <td>1.12</td>
     </tr>
     <tr>
@@ -92,7 +92,7 @@ It is important in this step, the fields_include parameter, because , some field
       <td>6.48</td>
       <td>42.01</td>
       <td>3.64</td>
-      <td>2.25+06</td>
+      <td>2.25*10^6</td>
       <td>1.81</td>
     </tr>
     <tr>
@@ -101,16 +101,16 @@ It is important in this step, the fields_include parameter, because , some field
       <td>12.97</td>
       <td>168.24</td>
       <td>0.52</td>
-      <td>1.10e+08</td>
+      <td>1.10*10^8</td>
       <td>2.29</td>
     </tr>
     <tr>
       <th>sea_level_pressure</th>
-      <td>1017.95</td>
+      <td>1,017.95</td>
       <td>4.03</td>
       <td>16.24</td>
       <td>5.15</td>
-      <td>1.44e+04</td>
+      <td>1.44*10^4</td>
       <td>1.03</td>
     </tr>
     <tr>
@@ -119,7 +119,7 @@ It is important in this step, the fields_include parameter, because , some field
       <td>2.15</td>
       <td>4.64</td>
       <td>2.59</td>
-      <td>1.24e+06</td>
+      <td>1.24*10^6</td>
       <td>1.42</td>
     </tr>
   </tbody>
